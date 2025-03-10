@@ -1,6 +1,6 @@
 # School Project: Software Development
 
-Welcome to our school project repository! This project aims to develop a web application using modern technologies and best practices in software development.
+Welcome to our XJCO2913 project repository! This project aims to develop a web application using modern technologies and best practices in software development.
 
 ## Team Roles
 
