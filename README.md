@@ -27,7 +27,7 @@ Welcome to our school project repository! This project aims to develop a web app
 4. Start coding!
 
 ## Important Links
-
+[wiki](https://github.com/DavidFeng-8844/XJCO2913CourseworkGroup14/wiki)
 ## Communication
 
 - Daily stand-up meetings
