@@ -1,19 +1,17 @@
 <script setup>
 import { ref } from 'vue';
-import { loginAPI } from '@/apis/user';
+import { loginAPI } from '@/apis/user'; 
 import { registerAPI } from '@/apis/user';
 import router from '@/router';
 import { ElMessage } from 'element-plus';
-import 'element-plus/theme-chalk/el-message.css';
 
-// 登录表单数据
+
 const form = ref({
-  account: '',
+  username: '',
   password: '',
   agree: true
 });
 
-// 注册表单数据
 const registerForm = ref({
   email: '',
   username: '',
@@ -22,12 +20,10 @@ const registerForm = ref({
   agree: false
 });
 
-// 当前显示的表单（login 或 register）
 const activeForm = ref('login');
 
-// 登录表单校验规则
 const rules = {
-  account: [
+  username: [
     { required: true, message: '用户名不能为空', trigger: 'blur' }
   ],
   password: [
@@ -47,15 +43,12 @@ const rules = {
   ]
 };
 
-// 注册表单校验规则
 const registerRules = {
   email: [
     { required: true, message: '邮箱不能为空', trigger: 'blur' },
     { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
   ],
-  username: [
-    { required: true, message: '用户名不能为空', trigger: 'blur' }
-  ],
+  username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
   password: [
     { required: true, message: '密码不能为空', trigger: 'blur' },
     { min: 6, max: 14, message: '密码长度要求6-14个字符', trigger: 'blur' }
@@ -85,35 +78,38 @@ const registerRules = {
   ]
 };
 
-// 切换表单
 const toggleForm = (formType) => {
   activeForm.value = formType;
 };
 
-// 登录逻辑
 const formRef = ref(null);
 const doLogin = () => {
   formRef.value.validate(async (valid) => {
     if (valid) {
-      const { account, password } = form.value;
-      const res = await loginAPI({ account, password });
-      ElMessage({ type: 'success', message: '登录成功' });
-      router.replace({ path: '/' });
+      const { username, password } = form.value;
+      try {
+        const res = await loginAPI({ username, password });
+        ElMessage({ type: 'success', message: res.data }); // 这里使用后端响应内容
+        router.replace({ path: '/' }); // 登录成功后跳转
+      } catch (error) {
+        ElMessage({ type: 'error', message: error.response.data || '登录失败' });
+      }
     }
   });
 };
 
-// 注册逻辑
 const registerFormRef = ref(null);
 const doRegister = async () => {
   registerFormRef.value.validate(async (valid) => {
     if (valid) {
       const { email, username, password } = registerForm.value;
-      // 调用注册接口
-      const res = await registerAPI({ email, username, password });
-      ElMessage({ type: 'success', message: '注册成功' });
-      // 注册成功后跳转到登录页面
-      activeForm.value = 'login';
+      try {
+        const res = await registerAPI({ email, username, password });
+        ElMessage({ type: 'success', message: res.data || 'Register Success' }); // 使用后端返回的成功消息
+        activeForm.value = 'login'; // 注册成功后切换到登录
+      } catch (error) {
+        ElMessage({ type: 'error', message: error.response.data || '注册失败' });
+      }
     }
   });
 };
@@ -129,13 +125,12 @@ const doRegister = async () => {
         </nav>
         <div class="account-box">
           <div class="form" v-if="activeForm === 'login'">
-            <!-- 登录表单保持不变 -->
             <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="60px" status-icon>
-              <el-form-item label="账户" prop="account">
-                <el-input v-model="form.account" />
+              <el-form-item label="账户" prop="username">
+                <el-input v-model="form.username" />
               </el-form-item>
               <el-form-item label="密码" prop="password">
-                <el-input v-model="form.password" show-password />
+                <el-input v-model="form.password" type="password" />
               </el-form-item>
               <el-form-item label-width="22px" prop="agree">
                 <el-checkbox v-model="form.agree" size="large">
@@ -146,19 +141,18 @@ const doRegister = async () => {
             </el-form>
           </div>
           <div class="form" v-if="activeForm === 'register'">
-            <!-- 注册表单 -->
             <el-form ref="registerFormRef" :model="registerForm" :rules="registerRules" label-position="right" label-width="80px" status-icon>
-              <el-form-item label="邮箱" prop="email" :label-style="{ fontSize: '20px', color: '#fff' }">
+              <el-form-item label="邮箱" prop="email">
                 <el-input v-model="registerForm.email" />
               </el-form-item>
               <el-form-item label="用户名" prop="username">
                 <el-input v-model="registerForm.username" />
               </el-form-item>
               <el-form-item label="密码" prop="password">
-                <el-input v-model="registerForm.password" show-password />
+                <el-input v-model="registerForm.password" type="password" />
               </el-form-item>
               <el-form-item label="确认密码" prop="confirmPassword">
-                <el-input v-model="registerForm.confirmPassword" show-password />
+                <el-input v-model="registerForm.confirmPassword" type="password" />
               </el-form-item>
               <el-form-item label-width="22px" prop="agree">
                 <el-checkbox v-model="registerForm.agree" size="large">
@@ -173,6 +167,10 @@ const doRegister = async () => {
     </section>
   </div>
 </template>
+
+<style scoped lang="scss">
+/* 您的样式代码保持不变 */
+</style>
 
 <style scoped lang="scss">
 .login-container {

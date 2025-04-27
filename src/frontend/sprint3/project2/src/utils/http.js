@@ -5,7 +5,7 @@ import 'element-plus/theme-chalk/el-message.css'
 
 
 const http = axios.create({
-    baseURL: '',
+    baseURL: 'http://localhost:8080/api/auth',
     timeout: 5000
   });
 
