@@ -89,6 +89,8 @@ const doLogin = () => {
       const { username, password } = form.value;
       try {
         const res = await loginAPI({ username, password });
+        console.log('Login Response:', res); // 打印响应数据，用于确认结构
+        // localStorage.setItem("token", res.data.token); // 假设 res.data.token 存在
         ElMessage({ type: 'success', message: res.data }); // 这里使用后端响应内容
         router.replace({ path: '/' }); // 登录成功后跳转
       } catch (error) {

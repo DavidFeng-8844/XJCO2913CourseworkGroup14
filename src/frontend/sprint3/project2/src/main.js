@@ -10,9 +10,13 @@ import 'element-plus/dist/index.css'
 
 import App from './App.vue'
 import router from './router'
+import store from './store/index.js'; // 导入 Vuex store
 import { useIntersectionObserver } from '@vueuse/core'
 
-const app = createApp(App)
+createApp(App)
+  .use(store) // 使用 Vuex store
+  .use(router) // 使用 Vue Router
+  .mount('#app');
 const vuetify = createVuetify({
     components,
     directives,

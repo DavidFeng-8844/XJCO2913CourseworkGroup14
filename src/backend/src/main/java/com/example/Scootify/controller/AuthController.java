@@ -20,7 +20,7 @@ public class AuthController {
             User user = new User();
             user.setUsername(userDTO.getUsername());
             user.setPassword(userDTO.getPassword());
-            user.setEmail(userDTO.getEmail());
+            user.setEmail(userDTO.getEmail()); // 设置邮箱
             userService.register(user);
             return ResponseEntity.ok("User registered successfully");
         } catch (RuntimeException e) {
