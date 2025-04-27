@@ -20,6 +20,7 @@ public class AuthController {
             User user = new User();
             user.setUsername(userDTO.getUsername());
             user.setPassword(userDTO.getPassword());
+            user.setEmail(userDTO.getEmail());
             userService.register(user);
             return ResponseEntity.ok("User registered successfully");
         } catch (RuntimeException e) {

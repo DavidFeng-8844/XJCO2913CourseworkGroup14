@@ -457,3 +457,123 @@ Caused by: org.h2.jdbc.JdbcSQLNonTransientConnectionException: The connection wa
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
 	... 89 more
+2025-04-27 21:39:25.206482+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found; SQL statement:
+DELETE FROM users [42102-232]
+2025-04-27 21:39:29.014103+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found; SQL statement:
+DELETE FROM users [42102-232]
+2025-04-27 21:39:53.954351+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found; SQL statement:
+DELETE FROM users [42102-232]
+2025-04-27 21:40:05.373082+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:40:05.968815+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:40:37.577724+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:40:40.735758+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:40:41.117772+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:40:41.319070+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:40:41.485818+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:40:41.649494+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:40:41.807501+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:40:42.124406+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:40:42.467463+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:40:45.895902+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found; SQL statement:
+DELETE FROM users [42102-232]
+2025-04-27 21:40:51.618615+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE FROM [*]user"; expected "identifier"; SQL statement:
+DELETE FROM user [42001-232]
+2025-04-27 21:46:25.602208+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:46:32.709212+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:46:40.935301+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:46:41.737839+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:46:42.286997+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:46:59.200692+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:47:07.201931+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM user"; expected "identifier"; SQL statement:
+DELETE * FROM user [42001-232]
+2025-04-27 21:47:07.891236+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM user"; expected "identifier"; SQL statement:
+DELETE * FROM user [42001-232]
+2025-04-27 21:47:16.594338+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:47:17.521717+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:47:18.143095+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:47:31.993154+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:47:32.433340+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:47:32.573566+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:47:32.725842+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 21:47:42.279324+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 22:03:41.286014+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 22:15:11.589504+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM [*]user"; expected "identifier"; SQL statement:
+SELECT * FROM user [42001-232]
+2025-04-27 22:17:06.097490+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 22:17:10.569374+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM user"; expected "identifier"; SQL statement:
+DELETE * FROM user [42001-232]
+2025-04-27 22:17:15.470624+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 22:17:15.859930+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 22:17:16.027037+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]
+2025-04-27 22:17:16.155676+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
+DELETE * FROM "user" [42001-232]

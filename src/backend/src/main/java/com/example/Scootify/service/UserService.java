@@ -14,15 +14,22 @@ public class UserService {
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public void register(User user) {
+        // Check if username already exists
         if (userRepository.findByUsername(user.getUsername()) != null) {
-            throw new RuntimeException("用户名已存在");
+            throw new RuntimeException("Username already exists"); // 用户名已存在
         }
+        
+        // Check if email is already registered
+        if (userRepository.findByEmail(user.getEmail()) != null) { // Use findByEmail here
+            throw new RuntimeException("Email already registered"); // 邮箱已注册
+        }
+    
         System.out.println("Plain Password: " + user.getPassword()); // 注册时的明文
         System.out.println("Encoded Password: " + passwordEncoder.encode(user.getPassword())); // 加密后
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // Save email 
-        user.setEmail(user.getEmail()); // 如果你在注册时需要邮箱
-        userRepository.save(user);
+        System.out.println("Email: " + user.getEmail()); // 注册时的邮箱
+    
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypt the password
+        userRepository.save(user); // Save the user
     }
     
     public User login(String username, String password) {
