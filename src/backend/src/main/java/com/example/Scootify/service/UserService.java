@@ -20,6 +20,8 @@ public class UserService {
         System.out.println("Plain Password: " + user.getPassword()); // 注册时的明文
         System.out.println("Encoded Password: " + passwordEncoder.encode(user.getPassword())); // 加密后
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // Save email 
+        user.setEmail(user.getEmail()); // 如果你在注册时需要邮箱
         userRepository.save(user);
     }
     
