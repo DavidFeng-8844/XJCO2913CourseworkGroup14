@@ -16,7 +16,11 @@
         </ul>
 
         <!-- 登录按钮 -->
-        <button class="login-button" @click="goToLogin">Login</button>
+        <!-- <button class="login-button" @click="goToLogin">Login</button> -->
+        <!-- 添加条件渲染以显示或隐藏登录按钮和用户链接 -->
+        <button v-if="!isLoggedIn" class="login-button" @click="goToLogin">Login</button>
+        <span v-if="isLoggedIn">{{ user.username }}</span> <!-- 显示用户名 -->
+        <button v-if="isLoggedIn" @click="logout">Logout</button> <!-- 登出按钮 -->
       </div>
     </div>
   </header>
@@ -24,11 +28,25 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
+import { computed } from 'vue';
+import { useStore } from 'vuex'; // 引入 Vuex
 
 const router = useRouter();
+const store = useStore(); // 使用 Vuex
+
 const props = defineProps({
   isTransparent: Boolean, // 接收父组件传递的透明度状态
 });
+
+// 获取登录状态和用户信息
+const isLoggedIn = computed(() => store.getters.isLoggedIn);
+const user = computed(() => store.getters.user);
+
+// 登出功能
+const logout = () => {
+  store.dispatch('logout'); // 调用 Vuex 中的登出 action
+  router.push('/'); // 登出后重定向到主页
+};
 
 // 跳转到登录页面
 const goToLogin = () => {

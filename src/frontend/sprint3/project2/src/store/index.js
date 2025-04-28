@@ -4,17 +4,21 @@ import { loginAPI } from '@/apis/user'; // 确保正确引入你的 loginAPI
 
 const store = createStore({
   state: {
-    isLoggedIn: false,
-    user: null,
+    // isLoggedIn: false,
+    // user: null,
+    user: JSON.parse(localStorage.getItem('user')) || null, // 从 localStorage 初始化用户信息
+    isLoggedIn: !!localStorage.getItem('user'), // Boolean值，是否已登录
   },
   mutations: {
     login(state, user) {
       state.isLoggedIn = true;
-      state.user = user; // 存储用户信息
+      // state.user = user; // 存储用户信息
+      localStorage.setItem('user', JSON.stringify(user)); // 存储用户信息
     },
     logout(state) {
       state.isLoggedIn = false;
       state.user = null; // 清空用户信息
+      localStorage.removeItem('user'); // 清除用户信息
     },
   },
   actions: {
@@ -38,6 +42,10 @@ const store = createStore({
     logout({ commit }) {
       commit('logout');
     },
+  },
+  getters: {
+    isLoggedIn: (state) => state.isLoggedIn,
+    user: (state) => state.user, // 获取用户信息
   },
 });
 
