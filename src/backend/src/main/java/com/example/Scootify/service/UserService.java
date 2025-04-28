@@ -31,14 +31,39 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypt the password
         userRepository.save(user); // Save the user
     }
+
+    public class LoginResponse {
+        private String message;
+        private User user;
     
-    public User login(String username, String password) {
-        User user = userRepository.findByUsername(username);
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) { // 验证密码
-            System.out.println("Plain Password: " + user.getPassword()); // 注册时的明文
-            System.out.println("Encoded Password: " + passwordEncoder.encode(user.getPassword())); // 加密后
+        public LoginResponse(String message, User user) {
+            this.message = message;
+            this.user = user;
+        }
+    
+        // getters and setters
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public User getUser() {
             return user;
         }
-        return null; // 登录失败
+
+        public void setUser(User user) {
+            this.user = user;
+        }
+    }
+    
+    public LoginResponse login(String username, String password) {
+        User user = userRepository.findByUsername(username);
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+            return new LoginResponse("Login successful", user);
+        }
+        return new LoginResponse("Invalid username or password", null); // 返回相应的失败提示
     }
 }

@@ -4,7 +4,9 @@ import { loginAPI } from '@/apis/user';
 import { registerAPI } from '@/apis/user';
 import router from '@/router';
 import { ElMessage } from 'element-plus';
+import { useStore } from 'vuex';
 
+const store = useStore(); 
 
 const form = ref({
   username: '',
@@ -79,7 +81,7 @@ const registerRules = {
 };
 
 const toggleForm = (formType) => {
-  activeForm.value = formType;
+  activeForm.value = formType;  
 };
 
 const formRef = ref(null);
@@ -88,17 +90,53 @@ const doLogin = () => {
     if (valid) {
       const { username, password } = form.value;
       try {
-        const res = await loginAPI({ username, password });
+        const res = await store.dispatch('login', { username, password });
         console.log('Login Response:', res); // 打印响应数据，用于确认结构
-        // localStorage.setItem("token", res.data.token); // 假设 res.data.token 存在
-        ElMessage({ type: 'success', message: res.data }); // 这里使用后端响应内容
-        router.replace({ path: '/' }); // 登录成功后跳转
+        if (res && res.message) {
+                    ElMessage({ type: 'success', message: res.message });
+                    router.replace({ path: '/' });
+                    
+                    // 提交到 Vuex store，确保 userData 结构正确
+                    store.commit('login', { username: res.username, email: res.email });
+                }
       } catch (error) {
-        ElMessage({ type: 'error', message: error.response.data || '登录失败' });
+        console.error("Error in doLogin:", error); 
+        ElMessage({ type: 'error', message: error.response?.data || '登录失败' });
       }
     }
   });
 };
+
+// const doLogin = () => {
+//   formRef.value.validate(async (valid) => {
+//     if (valid) {
+//       const { username, password } = form.value;
+//       try {
+//         const response = await fetch('/login', {
+//           method: 'POST',
+//           headers: {
+//             'Content-Type': 'application/json',
+//           },
+//           body: JSON.stringify({ username, password }), // 发送的请求体
+//         });
+
+//         if (response.ok) {
+//           const userData = await response.json(); // 解析用户数据
+//           store.commit('login', { username: userData.username, email: userData.email }); // 更新Vuex状态
+
+//           ElMessage({ type: 'success', message: '登录成功' });
+//           router.replace({ path: '/' }); // 登录成功后跳转
+//         } else {
+//           const errorMessage = await response.text(); // 获取错误信息
+//           ElMessage({ type: 'error', message: errorMessage || '登录失败' });
+//         }
+//       } catch (error) {
+//         ElMessage({ type: 'error', message: '登录失败' });
+//         console.error(error);
+//       }
+//     }
+//   });
+// };
 
 const registerFormRef = ref(null);
 const doRegister = async () => {

@@ -20,6 +20,18 @@ public class User implements UserDetails {
     private String email;
     private String username;
     private String password;
+
+    // Constructors
+    public User(Long id, String username, String email) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+    }
+
+    public User() {
+        // 默认构造函数
+    }
+    
     // 使用 List 等类型避免过于宽泛
     private Collection<? extends GrantedAuthority> authorities;
 
