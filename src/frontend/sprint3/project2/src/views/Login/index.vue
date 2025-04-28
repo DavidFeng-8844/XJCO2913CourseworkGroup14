@@ -107,37 +107,6 @@ const doLogin = () => {
   });
 };
 
-// const doLogin = () => {
-//   formRef.value.validate(async (valid) => {
-//     if (valid) {
-//       const { username, password } = form.value;
-//       try {
-//         const response = await fetch('/login', {
-//           method: 'POST',
-//           headers: {
-//             'Content-Type': 'application/json',
-//           },
-//           body: JSON.stringify({ username, password }), // 发送的请求体
-//         });
-
-//         if (response.ok) {
-//           const userData = await response.json(); // 解析用户数据
-//           store.commit('login', { username: userData.username, email: userData.email }); // 更新Vuex状态
-
-//           ElMessage({ type: 'success', message: '登录成功' });
-//           router.replace({ path: '/' }); // 登录成功后跳转
-//         } else {
-//           const errorMessage = await response.text(); // 获取错误信息
-//           ElMessage({ type: 'error', message: errorMessage || '登录失败' });
-//         }
-//       } catch (error) {
-//         ElMessage({ type: 'error', message: '登录失败' });
-//         console.error(error);
-//       }
-//     }
-//   });
-// };
-
 const registerFormRef = ref(null);
 const doRegister = async () => {
   registerFormRef.value.validate(async (valid) => {
