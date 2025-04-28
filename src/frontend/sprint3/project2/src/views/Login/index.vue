@@ -97,7 +97,8 @@ const doLogin = () => {
                     router.replace({ path: '/' });
                     
                     // 提交到 Vuex store，确保 userData 结构正确
-                    store.commit('login', { username: res.username, email: res.email });
+                    // store.commit('login', { username: res.username, email: res.email });
+                    // 不需要在这里提交到 Vuex，因为已经在 login action 中处理了
                 }
       } catch (error) {
         console.error("Error in doLogin:", error); 

@@ -20,6 +20,9 @@
         <!-- 添加条件渲染以显示或隐藏登录按钮和用户链接 -->
         <button v-if="!isLoggedIn" class="login-button" @click="goToLogin">Login</button> 
         <span v-if="isLoggedIn && user">{{ user.username }}</span> <!-- 显示用户名 -->
+        <p v-if="isLoggedIn">User is logged in</p>
+        <p v-else>User is not logged in.</p>
+        <p>User data: {{ user }}</p> <!-- 显示用户数据 -->
         <button v-if="isLoggedIn" @click="logout">Logout</button> <!-- 登出按钮 -->
       </div>
     </div>
@@ -28,7 +31,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
-import { computed, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useStore } from 'vuex'; // 引入 Vuex
 
 const router = useRouter();
@@ -41,28 +44,26 @@ const props = defineProps({
 // 获取登录状态和用户信息
 const isLoggedIn = computed(() => store.getters.isLoggedIn);
 const user = computed(() => store.getters.user || {}); // 获取用户信息，默认为空对象
+console.log('User in component:', user.value); // 登陆后获取 user 信息
+console.log('Is logged in:', isLoggedIn.value); // 登陆后获取登录状态
 
-const fetchUserData = async () => {
-  try {
-    await store.dispatch('fetchUserData'); // 确保您已实现 fetchUserData action
-  } catch (error) {
-    console.error('Failed to fetch user data:', error);
-  } finally {
-    isLoading.value = false; // 无论成功与否，设置 loading 状态为 false
-  }
-};
+// const isLoading = ref(true);
 
-onMounted(() => {
-  if (!store.getters.user) {
-    // 创建获取用户数据的 API 调用
-    fetchUserData();
-  }
-});
+// onMounted(async() => {
+//     if (!isLoggedIn.value) {
+//         await store.dispatch('fetchUserData').finally(() => {
+//           console.log('Current user state after fetching:', store.getters.user);
+//           isLoading.value = false;
+//         });
+//     } else {
+//         isLoading.value = false;
+//     }
+// });
 
 // 登出功能
 const logout = () => {
   store.dispatch('logout'); // 调用 Vuex 中的登出 action
-  router.push('/'); // 登出后重定向到主页
+  router.push('/login'); // 登出后重定向到主页
 };
 
 // 跳转到登录页面
