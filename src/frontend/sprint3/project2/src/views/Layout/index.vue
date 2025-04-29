@@ -6,7 +6,19 @@
     <div class="section home-section" id="home">
       <div class="content">
         <h1 class="slogan">This is a simple slogan</h1> <!-- 标语 -->
-        <button class="login-button" @click="goToLogin">Login to Use</button>
+        <!-- <button class="login-button" @click="goToLogin">Login to Use</button> -->
+        <button 
+          class="login-button" 
+          @click="goToLogin" 
+          v-if="!isLoggedIn" >
+          Login to Use
+        </button>
+        <button 
+          class="gotodash-button" 
+          @click="goToDashboard" 
+          v-if="isLoggedIn" >
+          Go to Dashboard
+        </button>
       </div>
     </div>
 
@@ -85,12 +97,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex'; // 引入 Vuex
 import LayoutHeader from '@/views/Layout/components/LayoutHeader.vue';
 
 const router = useRouter();
+const store = useStore(); // 使用 Vuex
+const isLoggedIn = computed(() => store.getters.isLoggedIn); // 获取登录状态
+console.log('Is logged in:', isLoggedIn.value); // 登陆后获取登录状态
 const isHeaderTransparent = ref(true); // 控制 Header 是否为透明背景
+
+
 
 // 跳转到登录页面
 const goToLogin = () => {
@@ -238,4 +256,19 @@ onUnmounted(() => {
   background: #fff;
   color: #000;
 }
+
+.gotodash-button {
+    background: #0593b6;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: #3800bb;
+    }
+  }
 </style>

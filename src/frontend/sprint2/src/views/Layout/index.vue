@@ -6,7 +6,19 @@
     <div class="section home-section" id="home">
       <div class="content">
         <h1 class="slogan">Your Simple Slogan Here</h1> <!-- 标语 -->
-        <button class="login-button" @click="goToLogin">Login to Use</button>
+        <!-- <button class="login-button" @click="goToLogin">Login to Use</button> -->
+        <button 
+          class="login-button" 
+          @click="goToLogin" 
+          v-if="!isLoggedIn" >
+          Login to Use
+        </button>
+        <button 
+          class="logout-button" 
+          @click="goToDashboard" 
+          v-if="isLoggedIn" >
+          Go to Dashboard
+        </button>
       </div>
     </div>
 
@@ -85,9 +97,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import LayoutHeader from '@/views/Layout/components/LayoutHeader.vue';
+
+import { useRouter } from 'vue-router'; // 如果您使用 Vue Router
+
+const store = useStore();
+
+const isLoggedIn = computed(() => store.getters.isLoggedIn); // 获取登录状态
+
+const goToDashboard = () => {
+  router.push({ path: '/dashboard' }); // 导航到用户仪表盘
+};
+
 
 const router = useRouter();
 const isHeaderTransparent = ref(true); // 控制 Header 是否为透明背景

@@ -9,21 +9,24 @@
       <!-- 右侧导航和登录按钮 -->
       <div class="nav-and-login">
         <ul class="app-header-nav">
-          <li><a href="#vehicles">Vehicles</a></li>
-          <li><a href="#how-to-use">How</a></li>
-          <li><a href="#why">Why</a></li>
-          <li><a href="#about-us">About Us</a></li>
+          <!-- <li><a href="#vehicles">Vehicles</a></li> -->
+          <!-- <li><a href="#how-to-use">How</a></li> -->
+          <!-- <li><a href="#why">Why</a></li> -->
+          <!-- <li><a href="#about-us">About Us</a></li> -->
         </ul>
 
         <!-- 登录按钮 -->
         <!-- <button class="login-button" @click="goToLogin">Login</button> -->
         <!-- 添加条件渲染以显示或隐藏登录按钮和用户链接 -->
         <button v-if="!isLoggedIn" class="login-button" @click="goToLogin">Login</button> 
-        <span v-if="isLoggedIn && user">{{ user.username }}</span> <!-- 显示用户名 -->
-        <p v-if="isLoggedIn">User is logged in</p>
-        <p v-else>User is not logged in.</p>
-        <p>User data: {{ user }}</p> <!-- 显示用户数据 -->
-        <button v-if="isLoggedIn" @click="logout">Logout</button> <!-- 登出按钮 -->
+        <!-- <span v-if="isLoggedIn && user">{{ user.username }}</span> -->
+         <!-- button got to dashboard with specific username -->
+         <button v-if="isLoggedIn" class="gotodash-button" @click="goToDashboard">User: {{ user.username }}</button>
+         <button v-if="isLoggedIn" class="logout-button" @click="logout">Logout</button>
+        <!-- <p v-if="isLoggedIn">User is logged in</p> -->
+        <!-- <p v-else>User is not logged in.</p>
+        <p>User data: {{ user }}</p> -->
+        
       </div>
     </div>
   </header>
@@ -167,5 +170,37 @@ const goToLogin = () => {
       background: #00bb00;
     }
   }
+
+
+  .gotodash-button {
+  background: #0593b6;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-right: 10px; /* Add space between buttons */
+
+  &:hover {
+    background: #3800bb;
+  }
+}
+
+.logout-button {
+  background: #0004ff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: #bb0000;
+  }
+}
 }
 </style>
