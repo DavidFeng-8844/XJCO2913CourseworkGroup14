@@ -22,10 +22,5 @@ public class EscooterBackendApplication extends SpringBootServletInitializer {
 	public static void main(String[] args) {
 		SpringApplication.run(EscooterBackendApplication.class, args);
 	}
-	@GetMapping(value = "/")
-	public String hello() {
-		return "Hello, World!";
-	}
-
 }
 

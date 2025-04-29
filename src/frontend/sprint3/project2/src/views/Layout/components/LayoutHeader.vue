@@ -3,7 +3,7 @@
     <div class="container">
       <!-- 左侧 Logo 和品牌名 -->
       <div class="brand">
-        <span class="brand-name">Brand Name</span>
+        <span class="brand-name">Scootify</span>
       </div>
 
       <!-- 右侧导航和登录按钮 -->
@@ -72,6 +72,11 @@ const logout = () => {
 // 跳转到登录页面
 const goToLogin = () => {
   router.push('/login');
+};
+
+// 跳转到 Dashboard 页面
+const goToDashboard = () => {
+  router.push('/dashboard');
 };
 </script>
 

@@ -12,6 +12,10 @@ public class UserDTO {
     private String password;
     private String email; // 如果你在注册时需要邮箱
     private List<String> authorities;
+    private int userage;
+    private String occupation; 
+    private String location;
+    private String card;
 
     // Constructors
     public UserDTO() {}

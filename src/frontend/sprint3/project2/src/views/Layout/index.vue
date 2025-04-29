@@ -5,7 +5,7 @@
 
     <div class="section home-section" id="home">
       <div class="content">
-        <h1 class="slogan">This is a simple slogan</h1> <!-- 标语 -->
+        <h1 class="slogan">Scootify for a better future</h1> <!-- 标语 -->
         <!-- <button class="login-button" @click="goToLogin">Login to Use</button> -->
         <button 
           class="login-button" 
@@ -19,24 +19,6 @@
           v-if="isLoggedIn" >
           Go to Dashboard
         </button>
-      </div>
-    </div>
-
-    <div class="section vehicles-section" id="vehicles">
-      <h2>Vehicles</h2>
-      <div class="card-container">
-        <div class="card">
-          <h3>Card 1</h3>
-          <p>This is the content of card 1.</p>
-        </div>
-        <div class="card">
-          <h3>Card 2</h3>
-          <p>This is the content of card 2.</p>
-        </div>
-        <div class="card">
-          <h3>Card 3</h3>
-          <p>This is the content of card 3.</p>
-        </div>
       </div>
     </div>
   </div>
@@ -59,6 +41,11 @@ const isHeaderTransparent = ref(true); // 控制 Header 是否为透明背景
 // 跳转到登录页面
 const goToLogin = () => {
   router.push('/login');
+};
+
+// 跳转到 Dashboard 页面
+const goToDashboard = () => {
+  router.push('/dashboard'); // 跳转到 Dashboard 页面
 };
 
 // 监听滚动事件
@@ -100,8 +87,11 @@ onUnmounted(() => {
 
 .home-section {
   background: url('@/assets/images/home.png') no-repeat center / cover;
-  justify-content: flex-end; /* 标语和登录按钮下移 */
-  padding-bottom: 200px; /* 增加底部间距 */
+  height: 100vh; /* Set height to fill the viewport */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
   .content {
     text-align: center;
@@ -127,6 +117,10 @@ onUnmounted(() => {
         background: #000; /* 黑底 */
         color: #fff; /* 白字 */
       }
+    }
+
+    .gotodash-button {
+      margin-top: 20px; /* Add space between the slogan and the button */
     }
   }
 }
