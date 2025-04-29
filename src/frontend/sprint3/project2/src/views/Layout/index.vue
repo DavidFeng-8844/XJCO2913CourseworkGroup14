@@ -39,60 +39,6 @@
         </div>
       </div>
     </div>
-
-    <div class="section how-to-use-section" id="how-to-use">
-      <h2>How to Use</h2>
-      <div class="card-container">
-        <div class="card yellow-card">
-          <h3>Card 1</h3>
-          <p>This is the content of card 1.</p>
-        </div>
-        <div class="card yellow-card">
-          <h3>Card 2</h3>
-          <p>This is the content of card 2.</p>
-        </div>
-        <div class="card yellow-card">
-          <h3>Card 3</h3>
-          <p>This is the content of card 3.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="section why-section" id="why">
-      <h2>Why</h2>
-      <div class="card-container">
-        <div class="card yellow-card">
-          <h3>Card 1</h3>
-          <p>This is the content of card 1.</p>
-        </div>
-        <div class="card yellow-card">
-          <h3>Card 2</h3>
-          <p>This is the content of card 2.</p>
-        </div>
-        <div class="card yellow-card">
-          <h3>Card 3</h3>
-          <p>This is the content of card 3.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="section about-us-section" id="about-us">
-      <h2>About Us</h2>
-      <div class="card-container">
-        <div class="card">
-          <h3>Card 1</h3>
-          <p>This is the content of card 1.</p>
-        </div>
-        <div class="card">
-          <h3>Card 2</h3>
-          <p>This is the content of card 2.</p>
-        </div>
-        <div class="card">
-          <h3>Card 3</h3>
-          <p>This is the content of card 3.</p>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
