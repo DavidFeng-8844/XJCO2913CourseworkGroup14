@@ -66,4 +66,19 @@ public class UserService {
         }
         return new LoginResponse("Invalid username or password", null); // 返回相应的失败提示
     }
+
+    public void updateUser(User updatedUser) {
+        User existingUser = userRepository.findById(updatedUser.getId())
+            .orElseThrow(() -> new RuntimeException("用户未找到"));
+
+        // 更新用户信息（如果需要）
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setUsername(updatedUser.getUsername());
+        // 如果提供了新的密码，更新密码
+        if (updatedUser.getPassword() != null) {
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+
+        userRepository.save(existingUser); // 保存更新后的用户信息
+    }
 }

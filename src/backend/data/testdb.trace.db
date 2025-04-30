@@ -577,3 +577,21 @@ DELETE * FROM "user" [42001-232]
 2025-04-27 22:17:16.155676+08:00 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""user"""; expected "identifier"; SQL statement:
 DELETE * FROM "user" [42001-232]
+2025-04-30 22:01:17.920516+08:00 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "SCPPTERS" not found; SQL statement:
+SELECT * FROM SCPPTERS [42102-232]
+2025-04-30 22:01:25.445649+08:00 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "SOOTERS" not found; SQL statement:
+SELECT * FROM SOOTERS [42102-232]
+2025-04-30 22:01:28.801090+08:00 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "SOOTERS" not found; SQL statement:
+SELECT * FROM SOOTERS [42102-232]
+2025-04-30 22:02:54.974957+08:00 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT ALL FROM [*]user"; expected "identifier"; SQL statement:
+SELECT ALL FROM user [42001-232]
+2025-04-30 22:02:59.777397+08:00 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM [*]user"; expected "identifier"; SQL statement:
+SELECT * FROM user [42001-232]
+2025-04-30 22:03:00.534006+08:00 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM [*]user"; expected "identifier"; SQL statement:
+SELECT * FROM user [42001-232]

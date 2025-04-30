@@ -1,14 +1,12 @@
 package com.example.Scootify.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "\"user\"") // 使用双引号避免SQL关键字冲突
@@ -20,77 +18,65 @@ public class User implements UserDetails {
     private String email;
     private String username;
     private String password;
+    private String card;
+    private int userage;
+    private String occupation; 
+    private String location;
 
-    // Constructors
+    // 映射用户的预订关系
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Booking> bookings;
+
+    // 权限
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    private Set<String> roles = new HashSet<>();
+
+
+    // 构造函数
     public User(Long id, String username, String email) {
         this.id = id;
         this.username = username;
         this.email = email;
     }
 
-    public User() {
-        // 默认构造函数
+    public User() { }
+
+    // Getters 和 Setters
+    public Set<Booking> getBookings() {
+        return bookings;
     }
+
+    public void setBookings(Set<Booking> bookings) {
+        this.bookings = bookings;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
     
-    // 使用 List 等类型避免过于宽泛
-    private Collection<? extends GrantedAuthority> authorities;
-
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    // @Override
+    // public Collection<? extends GrantedAuthority> getAuthorities() {
+    //     return authorities;
+    // }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities; // 返回用户的权限
+        return roles.stream().map(role -> (GrantedAuthority) () -> role).toList();
     }
-
+    
     // 实现 UserDetails 接口所需的方法
     @Override
-    public boolean isAccountNonExpired() {
-        return true; // 默认用户账户未过期
-    }
-
+    public boolean isAccountNonExpired() { return true; }
     @Override
-    public boolean isAccountNonLocked() {
-        return true; // 默认用户账户未被锁定
-    }
-
+    public boolean isAccountNonLocked() { return true; }
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true; // 默认用户凭证未过期
-    }
-
+    public boolean isCredentialsNonExpired() { return true; }
     @Override
-    public boolean isEnabled() {
-        return true; // 默认用户已启用
-    }
+    public boolean isEnabled() { return true; }
 }
