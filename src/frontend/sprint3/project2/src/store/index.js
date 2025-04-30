@@ -9,6 +9,7 @@ const store = createStore({
     // user: null,
     user: JSON.parse(localStorage.getItem('user')) || null, // 从 localStorage 初始化用户信息
     isLoggedIn: !!localStorage.getItem('user'), // Boolean值，是否已登录
+    isAdmin: (state) => state.user?.roles.includes('ROLE_ADMIN') 
   },
   mutations: {
     login(state, user) {
@@ -56,6 +57,7 @@ const store = createStore({
   getters: {
     isLoggedIn: state => state.isLoggedIn,
     user: state => state.user, // 获取用户信息
+    isAdmin: state => state.user && state.user.roles && state.user.roles.includes('ROLE_ADMIN'), // 判断是否为管理员
   },
 });
 

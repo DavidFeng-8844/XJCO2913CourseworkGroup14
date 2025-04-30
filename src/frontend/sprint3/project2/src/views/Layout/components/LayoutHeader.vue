@@ -8,24 +8,15 @@
 
       <!-- 右侧导航和登录按钮 -->
       <div class="nav-and-login">
-        <ul class="app-header-nav">
-          <!-- <li><a href="#vehicles">Vehicles</a></li> -->
-          <!-- <li><a href="#how-to-use">How</a></li> -->
-          <!-- <li><a href="#why">Why</a></li> -->
-          <!-- <li><a href="#about-us">About Us</a></li> -->
-        </ul>
-
-        <!-- 登录按钮 -->
-        <!-- <button class="login-button" @click="goToLogin">Login</button> -->
         <!-- 添加条件渲染以显示或隐藏登录按钮和用户链接 -->
         <button v-if="!isLoggedIn" class="login-button" @click="goToLogin">Login</button> 
         <!-- <span v-if="isLoggedIn && user">{{ user.username }}</span> -->
-         <!-- button got to dashboard with specific username -->
-         <button v-if="isLoggedIn" class="gotodash-button" @click="goToDashboard">User: {{ user.username }}</button>
-         <button v-if="isLoggedIn" class="logout-button" @click="logout">Logout</button>
-        <!-- <p v-if="isLoggedIn">User is logged in</p> -->
-        <!-- <p v-else>User is not logged in.</p>
-        <p>User data: {{ user }}</p> -->
+        <!-- button got to dashboard with specific username -->
+        <button v-if="isLoggedIn" class="gotodash-button" @click="goToDashboard">User: {{ user.username }}</button>
+        <button v-if="isLoggedIn" class="logout-button" @click="logout">Logout</button>
+        <!-- Admin -->
+        <button v-if="isAdmin" class="admin-button" @click="data">Data</button>
+        <button v-if="isAdmin" class="admin-button" @click="scooter">Scooter</button>
         
       </div>
     </div>
@@ -50,18 +41,8 @@ const user = computed(() => store.getters.user || {}); // 获取用户信息，�
 console.log('User in component:', user.value); // 登陆后获取 user 信息
 console.log('Is logged in:', isLoggedIn.value); // 登陆后获取登录状态
 
-// const isLoading = ref(true);
-
-// onMounted(async() => {
-//     if (!isLoggedIn.value) {
-//         await store.dispatch('fetchUserData').finally(() => {
-//           console.log('Current user state after fetching:', store.getters.user);
-//           isLoading.value = false;
-//         });
-//     } else {
-//         isLoading.value = false;
-//     }
-// });
+const isAdmin = computed(() => store.getters.isAdmin);
+console.log('Is admin:', isAdmin.value); // 获取管理员状态
 
 // 登出功能
 const logout = () => {
@@ -205,6 +186,21 @@ const goToDashboard = () => {
 
   &:hover {
     background: #bb0000;
+  }
+}
+
+.admin-button {
+  background: #ffcc00;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-inline: 10px;
+  transition: background 0.3s ease;
+  &:hover {
+    background: #bbbb00;
   }
 }
 }
