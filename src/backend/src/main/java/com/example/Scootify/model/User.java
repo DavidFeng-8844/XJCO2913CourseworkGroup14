@@ -19,7 +19,7 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private String card;
-    private int userage;
+    // private int userage;
     private String occupation; 
     private String location;
 
@@ -60,16 +60,18 @@ public class User implements UserDetails {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
     
-    // @Override
-    // public Collection<? extends GrantedAuthority> getAuthorities() {
-    //     return authorities;
-    // }
-
+    // User Details 接口方法
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream().map(role -> (GrantedAuthority) () -> role).toList();
     }
     
+    // 获取用户角色
+    public Set<String> getRoles() {
+        return roles;
+    }
+    
+
     // 实现 UserDetails 接口所需的方法
     @Override
     public boolean isAccountNonExpired() { return true; }

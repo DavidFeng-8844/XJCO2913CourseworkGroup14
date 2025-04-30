@@ -19,6 +19,7 @@ const registerForm = ref({
   username: '',
   password: '',
   confirmPassword: '',
+  adminKey: '',
   agree: false
 });
 
@@ -112,7 +113,7 @@ const registerFormRef = ref(null);
 const doRegister = async () => {
   registerFormRef.value.validate(async (valid) => {
     if (valid) {
-      const { email, username, password } = registerForm.value;
+      const { email, username, password, adminKey } = registerForm.value;
       try {
         const res = await registerAPI({ email, username, password });
         ElMessage({ type: 'success', message: res.data || 'Register Success' }); // 使用后端返回的成功消息
@@ -157,6 +158,9 @@ const doRegister = async () => {
               </el-form-item>
               <el-form-item label="用户名" prop="username">
                 <el-input v-model="registerForm.username" />
+              </el-form-item>
+              <el-form-item label="管理员密钥" prop="adminKey">
+                <el-input v-model="registerForm.adminKey" placeholder="留空则为普通用户" />
               </el-form-item>
               <el-form-item label="密码" prop="password">
                 <el-input v-model="registerForm.password" type="password" />

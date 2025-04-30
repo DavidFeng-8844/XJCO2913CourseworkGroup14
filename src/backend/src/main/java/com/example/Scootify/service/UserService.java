@@ -4,6 +4,7 @@ import com.example.Scootify.model.User;
 import com.example.Scootify.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +14,11 @@ public class UserService {
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public void register(User user) {
+    // 从配置文件读取密钥
+    @Value("${admin.secret.key}")
+    private String adminSecretKey;
+
+    public void register(User user, String secretKey) {
         // Check if username already exists
         if (userRepository.findByUsername(user.getUsername()) != null) {
             throw new RuntimeException("Username already exists"); // 用户名已存在
@@ -29,6 +34,16 @@ public class UserService {
         System.out.println("Email: " + user.getEmail()); // 注册时的邮箱
     
         user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypt the password
+
+        // 检查密钥并设置角色
+        if (secretKey != null && adminSecretKey.equals(secretKey)) {
+            user.getRoles().add("ROLE_ADMIN");
+        } else if (secretKey != null && !adminSecretKey.equals(secretKey)) {
+            user.getRoles().add("ROLE_USER"); // 默认普通用户角色
+        }// 否则报错
+        else {
+            throw new RuntimeException("Invalid secret key for registration"); // 密钥无效
+        }
         userRepository.save(user); // Save the user
     }
 
@@ -58,6 +73,20 @@ public class UserService {
             this.user = user;
         }
     }
+
+    // public void registerAdmin(String username, String password, String secretKey) {
+    //     // 验证提供的密钥
+    //     if (!adminSecretKey.equals(secretKey)) {
+    //         throw new RuntimeException("Invalid secret key for admin registration");
+    //     }
+
+    //     User adminUser = new User();
+    //     adminUser.setUsername(username);
+    //     adminUser.setPassword(passwordEncoder.encode(password)); // 加密密码
+    //     adminUser.getRoles().add("ROLE_ADMIN"); // 设置管理员角色
+
+    //     userRepository.save(adminUser); // 保存管理员用户
+    // }
     
     public LoginResponse login(String username, String password) {
         User user = userRepository.findByUsername(username);

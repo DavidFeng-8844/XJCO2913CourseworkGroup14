@@ -17,13 +17,13 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> register(@RequestBody UserDTO userDTO, @RequestParam(required = false) String adminKey) {
         try {
             User user = new User();
             user.setUsername(userDTO.getUsername());
             user.setPassword(userDTO.getPassword());
             user.setEmail(userDTO.getEmail()); // 设置邮箱
-            userService.register(user);
+            userService.register(user, adminKey); // 传递adminKey
             return ResponseEntity.ok("User registered successfully");
         } catch (RuntimeException e) {
             return ResponseEntity.status(400).body(e.getMessage()); // 返回异常消息给前端
@@ -31,14 +31,6 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    // public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-    //     User user = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
-    //     if (user != null) {
-    //         return ResponseEntity.ok("Login successful");
-    //     } else {
-    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Auth: Login failed");
-    //     }
-    // }
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         LoginResponse response = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
         if (response.getUser() != null) {
@@ -47,4 +39,14 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response); // 返回401未授权状态
     }
 
+
+    @PostMapping("/admin/login")
+    public ResponseEntity<LoginResponse> adminLogin(@RequestBody LoginRequest loginRequest) {
+        LoginResponse response = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+        if (response.getUser() != null && response.getUser().getRoles().contains("ROLE_ADMIN")) {
+            return ResponseEntity.ok(response); // 管理员登录成功
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response); // 返回401未授权状态
+        }
+    }
 }
