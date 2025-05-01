@@ -9,6 +9,11 @@ const http = axios.create({
     timeout: 5000
   });
 
+const scooter = axios.create({
+    baseURL: 'http://localhost:8080/api/scooters',
+    timeout: 5000
+  });
+
 // axios请求拦截器
 // 一般会进行token身份验证等
 http.interceptors.request.use(config => {
@@ -21,4 +26,10 @@ http.interceptors.response.use(res => res.data, e => {
   return Promise.reject(e)
 })
 
+scooter.interceptors.response.use(res => res.data, e => {
+  ElMessage({ type: 'error', message: e.response.data.message });
+  return Promise.reject(e);
+});
+
 export default http
+export { scooter } // 导出scooter实例

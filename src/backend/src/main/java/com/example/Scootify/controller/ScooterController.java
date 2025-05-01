@@ -24,9 +24,16 @@ public class ScooterController {
     private BookingService bookingService;
 
     // 获取可用滑板车
-    @GetMapping("/scooters")
+    @GetMapping("/get-scooters")
     public List<Scooter> getAvailableScooters(@RequestParam double lat, @RequestParam double lng) {
         return scooterService.findAvailableScooters(lat, lng);
+    }
+
+    // 添加滑板车（管理员权限）
+    @PostMapping("/add-scooter")
+    public void addScooter(@RequestBody Scooter scooter) {
+        System.out.println("Received scooter: " + scooter);
+        scooterService.addScooter(scooter);
     }
 
     // 创建预订

@@ -22,6 +22,7 @@ public class SecurityConfig {
             .authorizeRequests()
             .requestMatchers("/h2-console/**").permitAll() // 允许访问 H2 控制台
             .requestMatchers("/api/auth/**").permitAll()  // 允许注册和登录
+            .requestMatchers("/api/scooters/**").permitAll() // 允许访问电动滑板车相关的 API
             .anyRequest().authenticated();
         return http.build();
     }

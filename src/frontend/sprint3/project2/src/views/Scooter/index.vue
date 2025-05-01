@@ -44,6 +44,7 @@
   import { ref } from "vue";
   import axios from "axios";
   import LayoutHeader from '@/views/Layout/components/LayoutHeader.vue';
+  import { addScooterAPI } from "@/apis/scooter";
   
   const scooterId = ref("");
   const latitude = ref("");
@@ -56,7 +57,13 @@
     }
   
     try {
-      const response = await axios.post("http://localhost:8080/api/scooters", {
+      // const response = await axios.post("http://localhost:8080/api/scooters/add-scooters", {
+      //   id: scooterId.value,
+      //   locationLat: parseFloat(latitude.value),
+      //   locationLng: parseFloat(longitude.value),
+      //   status: "available",
+      // });
+      const response = await addScooterAPI({
         id: scooterId.value,
         locationLat: parseFloat(latitude.value),
         locationLng: parseFloat(longitude.value),
@@ -69,9 +76,9 @@
       latitude.value = "";
       longitude.value = "";
     } catch (error) {
-      console.error("添加滑板车失败:", error);
-      alert("添加滑板车失败，请重试！");
-    }
+  console.error("添加滑板车失败:", error.response ? error.response.data : error);
+  alert(error.response?.data?.message || "添加滑板车失败，请重试！");
+}
   };
   </script>
   

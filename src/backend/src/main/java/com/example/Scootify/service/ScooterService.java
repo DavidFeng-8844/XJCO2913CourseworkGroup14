@@ -19,7 +19,14 @@ public class ScooterService {
     }
 
     public void addScooter(Scooter scooter) {
-        scooterRepository.save(scooter);
+        try {
+            System.out.println("Saving scooter: " + scooter);
+            scooterRepository.save(scooter);
+            System.out.println("Scooter saved successfully");
+        } catch (Exception e) {
+            System.err.println("Error saving scooter: " + e.getMessage());
+            throw e;
+        }
     }
 
     // 其他的增、删、改查方法
