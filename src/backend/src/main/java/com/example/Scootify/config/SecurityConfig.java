@@ -14,7 +14,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        http 
+            .cors().and() // 启用 CORS 支持
             .headers().frameOptions().disable() // 允许 H2 控制台的 iframe 嵌入
             .and() // Enable H2 console access
             .csrf().disable()

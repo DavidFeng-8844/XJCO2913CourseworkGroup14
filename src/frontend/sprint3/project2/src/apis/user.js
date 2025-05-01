@@ -26,6 +26,9 @@ export function loginAPI(user) {
  * @return {*}
  */
 
-export function registerAPI(user) {
-    return http.post('/register', user);
+export function registerAPI(user, adminKey) {
+    const url = adminKey ? `/register?adminKey=${encodeURIComponent(adminKey)}` : '/register';
+    // console.log('Register URL:', url); // 打印注册的URL
+    // console.log('User data:', user); // 打印用户数据
+    return http.post(url, user);
   }

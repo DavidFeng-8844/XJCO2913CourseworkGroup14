@@ -36,13 +36,14 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypt the password
 
         // 检查密钥并设置角色
-        if (secretKey != null && adminSecretKey.equals(secretKey)) {
-            user.getRoles().add("ROLE_ADMIN");
-        } else if (secretKey != null && !adminSecretKey.equals(secretKey)) {
+        if (secretKey != null && !secretKey.isEmpty()) {
+            if (adminSecretKey.equals(secretKey)) {
+                user.getRoles().add("ROLE_ADMIN");
+            } else {
+                throw new RuntimeException("Invalid secret key for registration");
+            }
+        } else {
             user.getRoles().add("ROLE_USER"); // 默认普通用户角色
-        }// 否则报错
-        else {
-            throw new RuntimeException("Invalid secret key for registration"); // 密钥无效
         }
         userRepository.save(user); // Save the user
     }

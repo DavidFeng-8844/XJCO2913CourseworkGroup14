@@ -19,6 +19,7 @@ const store = createStore({
       state.user = {
         username: user.username, // 确保获取的 username 字段
         email: user.email,       // 确保获取的 email 字段
+        roles: user.roles,       // 确保获取的 roles 字段
       };
       console.log('User information stored in Vuex:', state.user);
       localStorage.setItem('user', JSON.stringify(user)); // 存储用户信息

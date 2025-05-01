@@ -20,7 +20,7 @@ const registerForm = ref({
   password: '',
   confirmPassword: '',
   adminKey: '',
-  agree: false
+  agree: true
 });
 
 const activeForm = ref('login');
@@ -115,11 +115,11 @@ const doRegister = async () => {
     if (valid) {
       const { email, username, password, adminKey } = registerForm.value;
       try {
-        const res = await registerAPI({ email, username, password });
+        const res = await registerAPI({email, username, password}, adminKey);
         ElMessage({ type: 'success', message: res.data || 'Register Success' }); // 使用后端返回的成功消息
         activeForm.value = 'login'; // 注册成功后切换到登录
       } catch (error) {
-        ElMessage({ type: 'error', message: error.response.data || '注册失败' });
+        ElMessage({ type: 'error', message: error.response?.data || '注册失败' });
       }
     }
   });
