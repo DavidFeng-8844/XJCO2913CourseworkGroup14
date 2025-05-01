@@ -3,7 +3,9 @@
     <div class="container">
       <!-- 左侧 Logo 和品牌名 -->
       <div class="brand">
-        <span class="brand-name">Scootify</span>
+        <!-- link button-->
+        <router-link to="/" class="brand-name">Scootify</router-link>
+        <span class="slogan">Scooter Sharing System</span>
       </div>
 
       <!-- 右侧导航和登录按钮 -->
@@ -58,6 +60,16 @@ const goToLogin = () => {
 // 跳转到 Dashboard 页面
 const goToDashboard = () => {
   router.push('/dashboard');
+};
+
+// 跳转到数据页面
+const data = () => {
+  router.push('/data');
+};
+
+// 跳转到滑板车页面
+const scooter = () => {
+  router.push('/add-scooter');
 };
 </script>
 
