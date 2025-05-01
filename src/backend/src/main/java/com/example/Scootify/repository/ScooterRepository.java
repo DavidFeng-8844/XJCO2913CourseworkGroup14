@@ -11,6 +11,6 @@ public interface ScooterRepository extends JpaRepository<Scooter, String> {
     
     // 创建自定义查询，根据经纬度查找可用的滑板车
     @Query("SELECT s FROM Scooter s WHERE s.status = 'available' AND " +
-           "FUNCTION('ST_Distance_Sphere', s.locationLat, s.locationLng, :lat, :lng) < 5000") // 5000米为例
-    List<Scooter> findAvailableScooters(@Param("lat") double lat, @Param("lng") double lng);
+       "(6371 * acos(cos(radians(:lat)) * cos(radians(s.locationLat)) * cos(radians(s.locationLng) - radians(:lng)) + sin(radians(:lat)) * sin(radians(s.locationLat)))) <= :radius")
+List<Scooter> findAvailableScooters(@Param("lat") double lat, @Param("lng") double lng, @Param("radius") double radius);
 }

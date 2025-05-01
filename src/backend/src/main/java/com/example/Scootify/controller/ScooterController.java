@@ -25,8 +25,9 @@ public class ScooterController {
 
     // 获取可用滑板车
     @GetMapping("/get-scooters")
-    public List<Scooter> getAvailableScooters(@RequestParam double lat, @RequestParam double lng) {
-        return scooterService.findAvailableScooters(lat, lng);
+    public List<Scooter> getAvailableScooters(@RequestParam double lat, @RequestParam double lng, @RequestParam double radius) {
+        System.out.println("Received parameters - lat: " + lat + ", lng: " + lng + ", radius: " + radius);
+        return scooterService.findAvailableScooters(lat, lng, radius);
     }
 
     // 添加滑板车（管理员权限）

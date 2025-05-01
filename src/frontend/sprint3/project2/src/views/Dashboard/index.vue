@@ -25,7 +25,7 @@
       <div class="section app">
         <h1>滑板车预订系统</h1>
         <div id="map" ref="map" style="height: 500px;"></div>
-        <button class="getUserLocation" @click="getUserLocation">Find Nearest Scooter</button>
+        <button class="getUserLocation" @click="fetchNearestScooters">Find Nearest Scooter</button>
         <!-- center to user location -->
         <button class="getUserLocation" @click="centerToUserLocation">Center map to my Location</button>
         <h2>可用滑板车列表</h2>
@@ -73,12 +73,30 @@
   <script setup>
   import { ref, computed, onMounted } from 'vue';
   import LayoutHeader from '@/views/Layout/components/LayoutHeader.vue';
+  import { getNearestScootersAPI } from "@/apis/scooter";
   
   const map = ref(null);
   const userMarker = ref(null);
   const nearbyScooters = ref([]);
   const scooterMarkers = ref([]);
   
+  const fetchNearestScooters = async () => {
+  try {
+    const lat = 1; // 示例纬度
+    const lng = 1; // 示例经度
+    const radius = 5000; // 搜索半径（单位：米）
+    const response = await getNearestScootersAPI(lat, lng, radius);
+    nearbyScooters.value = response;
+    console.log("最近的滑板车:", nearbyScooters.value);
+  } catch (error) {
+    console.error("获取最近的滑板车失败:", error.response?.data || error);
+  }
+  };
+
+  onMounted(() => {
+    fetchNearestScooters();
+  });
+
   // 示例滑板车位置
   const scooters = [
     { id: 'scooter1', location: { lat: 34.0522, lng: -118.2437 }, status: 'available' },

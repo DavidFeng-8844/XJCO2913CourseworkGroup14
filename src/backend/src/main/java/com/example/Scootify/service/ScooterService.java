@@ -13,9 +13,9 @@ public class ScooterService {
     @Autowired
     private ScooterRepository scooterRepository;
 
-    public List<Scooter> findAvailableScooters(double lat, double lng) {
+    public List<Scooter> findAvailableScooters(double lat, double lng, double radius) {
         // 查询滑板车逻辑，根据经纬度查找可用的滑板车，可以使用JPA查询或自定义查询
-        return scooterRepository.findAvailableScooters(lat, lng);
+        return scooterRepository.findAvailableScooters(lat, lng, radius);
     }
 
     public void addScooter(Scooter scooter) {
