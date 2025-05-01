@@ -1,5 +1,7 @@
 package com.example.Scootify.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +21,8 @@ public class Booking {
     private Scooter scooter; // 关联合同的滑板车
 
     private String status; // 预订状态，比如 "active", "cancelled"
+    private LocalDateTime startTime; // 预订开始时间
+    private LocalDateTime endTime; // 预订结束时间
 
     // 构造函数
     public Booking() { }
@@ -54,4 +58,21 @@ public class Booking {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+}
 }

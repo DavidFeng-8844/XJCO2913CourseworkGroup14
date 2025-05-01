@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/scooters")
 public class ScooterController {
 
     @Autowired
@@ -31,8 +31,8 @@ public class ScooterController {
 
     // 创建预订
     @PostMapping("/bookings")
-    public Booking createBooking(@RequestParam Long userId, @RequestParam String scooterId) {
-        return bookingService.createBooking(userId, scooterId);
+    public Booking createBooking(@RequestParam Long userId, @RequestParam String scooterId, @RequestParam int durationInHours) {
+        return bookingService.createBooking(userId, scooterId, durationInHours);
     }
 
     // 取消预订

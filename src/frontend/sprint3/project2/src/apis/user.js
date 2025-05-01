@@ -32,3 +32,7 @@ export function registerAPI(user, adminKey) {
     // console.log('User data:', user); // 打印用户数据
     return http.post(url, user);
   }
+
+export function addScooterAPI(scooter) {
+    return http.post('/scooter', scooter);
+}

@@ -8,6 +8,8 @@ import com.example.Scootify.repository.ScooterRepository;
 import com.example.Scootify.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Scheduled;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,18 +24,37 @@ public class BookingService {
     @Autowired
     private ScooterRepository scooterRepository; // 用于查找滑板车
 
-    public Booking createBooking(Long userId, String scooterId) {
+    public Booking createBooking(Long userId, String scooterId, int durationInHours) {
         User user = userRepository.findById(userId)
                                   .orElseThrow(() -> new RuntimeException("User not found")); // 查找用户
         Scooter scooter = scooterRepository.findById(scooterId)
                                             .orElseThrow(() -> new RuntimeException("Scooter not found")); // 查找滑板车
         
         Booking booking = new Booking();
+        booking.setStartTime(LocalDateTime.now()); // 设置开始时间
+        booking.setEndTime(LocalDateTime.now().plusHours(durationInHours)); // 设置结束时间为1小时后
         booking.setUser(user);    // 使用 setUser 方法
         booking.setScooter(scooter); // 使用 setScooter 方法
         booking.setStatus("active"); // 设置状态为 "active"
 
+        scooter.setStatus("unavailable"); // 设置滑板车状态为 "unavailable"
+        scooterRepository.save(scooter); // 保存滑板车状态
+
         return bookingRepository.save(booking); // 保存预订
+    }
+
+    @Scheduled(fixedRate = 60000) // 每分钟检查一次
+    public void checkBookingStatus() {
+        List<Booking> bookings = bookingRepository.findAll(); // 查找所有预订
+        for (Booking booking : bookings) {
+            if (booking.getStatus().equals("active")) {
+                // 检查预订是否过期，如果过期则更新状态
+                if (booking.getEndTime().isBefore(LocalDateTime.now())) {
+                    booking.setStatus("expired"); // 设置状态为 "expired"
+                    bookingRepository.save(booking); // 保存更新后的预订
+                }
+            }
+        }
     }
 
     public void cancelBooking(Long bookingId) {
