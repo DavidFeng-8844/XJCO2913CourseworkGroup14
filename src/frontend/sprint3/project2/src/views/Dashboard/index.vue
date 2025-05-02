@@ -26,13 +26,15 @@
         <h1>滑板车预订系统</h1>
         <div id="map" ref="map" style="height: 500px;"></div>
         <button class="getUserLocation" @click="getUserLocation">Find Nearest Scooter</button>
+        <!-- get all scooters -->
+        <button class="getUserLocation" @click="fetchAllScooters">Find all fetchNearestScooters</button>
         <!-- center to user location -->
         <button class="getUserLocation" @click="centerToUserLocation">Center map to my Location</button>
         <h2>可用滑板车列表</h2>
         <ul>
           <li v-for="scooter in nearbyScooters" :key="scooter.id" class="scooter-item">
             <div>
-              <strong>{{ scooter.id }}</strong> -
+              <strong>ID: {{ scooter.id }}</strong> -
               Status: {{ scooter.status }} -
               Distance: {{ scooter.distance }} km
             </div>
@@ -74,12 +76,15 @@
   import { ref, computed, onMounted } from 'vue';
   import LayoutHeader from '@/views/Layout/components/LayoutHeader.vue';
   import { getNearestScootersAPI } from "@/apis/scooter";
+  // import { getAllScootersAPI } from "@/apis/scooter"; // Import the API function to fetch all scooters
   
   // const map = ref();
   let map;
   const userMarker = ref(null);
   const nearbyScooters = ref([]); 
   const scooterMarkers = ref([]);
+  const allScooters = ref([]); // Store all scooters
+  const allScooterMarkers = ref([]); // Store all scooter markers
   
   const getUserLocation = () => {
   if (navigator.geolocation) {
@@ -101,9 +106,24 @@
   const fetchNearestScooters = async (userLocation) => {
   try {
     const { lat, lng } = userLocation; // Extract latitude and longitude from userLocation
-    const radius = 1000000000; // Search radius in meters
+    const radius = 50000000000; // Search radius in meters
     const response = await getNearestScootersAPI(lat, lng, radius);
-    nearbyScooters.value = response;
+    // nearbyScooters.value = response;
+
+    // Compute distances and add them to the scooter objects
+    nearbyScooters.value = response.map(scooter => {
+    const distance = google.maps.geometry.spherical.computeDistanceBetween(
+      new google.maps.LatLng(lat, lng),
+      new google.maps.LatLng(scooter.locationLat, scooter.locationLng)
+    ) / 1000; // Convert to kilometers
+    return {
+      ...scooter,
+      distance: distance.toFixed(2), // Add distance property
+    };
+    });
+
+    // Sort scooters by distance
+    nearbyScooters.value.sort((a, b) => a.distance - b.distance);
 
     console.log("最近的滑板车:", nearbyScooters.value);
 
@@ -126,6 +146,14 @@
         },
       });
 
+      
+      // Compute the nearest scooter from the scooter list
+      const distance = google.maps.geometry.spherical.computeDistanceBetween(
+        new google.maps.LatLng(lat, lng),
+        new google.maps.LatLng(scooter.locationLat, scooter.locationLng)
+      ) / 1000; // Convert to kilometers
+      scooter.distance = distance.toFixed(2); // Add distance to the scooter object
+
       // Create an InfoWindow for the marker
       const infoWindow = new google.maps.InfoWindow({
         content: `
@@ -142,27 +170,54 @@
         infoWindow.open(map.value, marker);
       });
 
-      // Compute the nearest scooter from the scooter list
-      const distance = google.maps.geometry.spherical.computeDistanceBetween(
-        new google.maps.LatLng(lat, lng),
-        new google.maps.LatLng(scooter.locationLat, scooter.locationLng)
-      ) / 1000; // Convert to kilometers
-      scooter.distance = distance.toFixed(2); // Add distance to the scooter object
-      // Center the map to the nearest scooter
       marker.setMap(map.value); 
       scooterMarkers.value.push(marker);
       console.log(`滑板车ID: ${scooter.id} - 距离: ${scooter.distance} km`);
-      map.value.setCenter({ lat: scooter.locationLat, lng: scooter.locationLng }); // Center map on the first scooter
+      // center map to the nearest scooter
+      if (nearbyScooters.value.length > 0) {
+      const nearestScooter = nearbyScooters.value[0];
+      map.value.setCenter({
+        lat: nearestScooter.locationLat,
+        lng: nearestScooter.locationLng,
+      });
+      map.value.setZoom(15); // Zoom in on the nearest scooter
+      }
     });
   } catch (error) {
     console.error("获取最近的滑板车失败:", error.response?.data || error);
   }
 };
 
-  onMounted(() => {
-    fetchNearestScooters();
-  });
-  
+  const fetchAllScooters = async () => {
+    try {
+      const response = await getAllScootersAPI();
+
+      // compute distances and add them to the scooter objects
+      allScooters.value = response.map(scooter => {
+        const distance = google.maps.geometry.spherical.computeDistanceBetween(
+          new google.maps.LatLng(userMarker.value.getPosition().lat(), userMarker.value.getPosition().lng()),
+          new google.maps.LatLng(scooter.locationLat, scooter.locationLng)
+        ) / 1000; // Convert to kilometers
+        return {
+          ...scooter,
+          distance: distance.toFixed(2), // Add distance property
+        };
+      });
+      // Sort scooters by distance
+      allScooters.value.sort((a, b) => a.distance - b.distance);
+
+      // Clear existing scooter markers
+      allScooterMarkers.value.forEach(marker => marker.setMap(null));
+      allScooterMarkers.value = [];
+      
+      // Add new markers for the fetched scooters
+
+      console.log("所有滑板车:", response);
+    } catch (error) {
+      console.error("获取所有滑板车失败:", error.response?.data || error);
+    }
+  };
+
   const initMap = () => {
     // 初始化地图
     map.value = new google.maps.Map(document.getElementById('map'), {
@@ -203,7 +258,17 @@ const centerToUserLocation = () => {
         }
       });
 
+
+      // User infoWindow
+      const userInfoWindow = new google.maps.InfoWindow({
+        content: `<div><strong>您的位置${userLocation.lat} ${userLocation.lng}</strong></div>`,
+      });
+      // open the info window when the marker is clicked
+      userMarker.value.addListener('click', () => {
+        userInfoWindow.open(map.value, userMarker.value);
+      });
       map.value.setCenter(userLocation); // 设置地图中心为用户位置
+      map.value.setZoom(20); // 放大地图
     }, error => {
       console.error('获取位置失败:', error.message);
       alert('无法获得用户位置，请检查设置。');
@@ -221,6 +286,7 @@ const centerToUserLocation = () => {
   
   onMounted(() => {
     initMap();
+    fetchNearestScooters();
   });
   
   // 预订功能
