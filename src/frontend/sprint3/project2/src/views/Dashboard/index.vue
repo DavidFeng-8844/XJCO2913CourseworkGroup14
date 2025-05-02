@@ -25,7 +25,7 @@
       <div class="section app">
         <h1>滑板车预订系统</h1>
         <div id="map" ref="map" style="height: 500px;"></div>
-        <button class="getUserLocation" @click="fetchNearestScooters">Find Nearest Scooter</button>
+        <button class="getUserLocation" @click="getUserLocation">Find Nearest Scooter</button>
         <!-- center to user location -->
         <button class="getUserLocation" @click="centerToUserLocation">Center map to my Location</button>
         <h2>可用滑板车列表</h2>
@@ -75,73 +75,20 @@
   import LayoutHeader from '@/views/Layout/components/LayoutHeader.vue';
   import { getNearestScootersAPI } from "@/apis/scooter";
   
-  const map = ref(null);
+  // const map = ref();
+  let map;
   const userMarker = ref(null);
-  const nearbyScooters = ref([]);
+  const nearbyScooters = ref([]); 
   const scooterMarkers = ref([]);
   
-  const fetchNearestScooters = async () => {
-  try {
-    const lat = 1; // 示例纬度
-    const lng = 1; // 示例经度
-    const radius = 5000; // 搜索半径（单位：米）
-    const response = await getNearestScootersAPI(lat, lng, radius);
-    nearbyScooters.value = response;
-    console.log("最近的滑板车:", nearbyScooters.value);
-  } catch (error) {
-    console.error("获取最近的滑板车失败:", error.response?.data || error);
-  }
-  };
-
-  onMounted(() => {
-    fetchNearestScooters();
-  });
-
-  // 示例滑板车位置
-  const scooters = [
-    { id: 'scooter1', location: { lat: 34.0522, lng: -118.2437 }, status: 'available' },
-    { id: 'scooter2', location: { lat: 34.0528, lng: -118.2430 }, status: 'available' },
-    { id: 'scooter3', location: { lat: 34.0542, lng: -118.2550 }, status: 'available' },
-    { id: 'scooter4', location: { lat: 34.0500, lng: -118.2500 }, status: 'in_use' },
-    { id: 'scooter5', location: { lat: 34.0582, lng: -118.2437 }, status: 'available' },
-    { id: 'scooter6', location: { lat: 34.0622, lng: -118.2677 }, status: 'available' },
-  ];
-  
-  const initMap = () => {
-    // 初始化地图
-    map.value = new google.maps.Map(document.getElementById('map'), {
-      center: { lat: 34.0522, lng: -118.2437 }, // 默认中心
-      zoom: 14,
-    });
-  };
-  
-  
-const getUserLocation = () => {
+  const getUserLocation = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
       const userLocation = {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       };
-
-      if (userMarker.value) {
-        userMarker.value.setMap(null); // 移除旧的标记
-      }
-
-      userMarker.value = new google.maps.Marker({
-        position: userLocation,
-        map: map.value,
-        title: "您的位置",
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 7,
-          fillColor: 'blue',
-          fillOpacity: 1,
-          strokeWeight: 1
-        }
-      });
-      console.log('getUSerLocation用户位置:', userLocation);
-      findNearbyScooters(userLocation);
+      fetchNearestScooters(userLocation); // 获取最近的滑板车
     }, error => {
       console.error('获取位置失败:', error.message);
       alert('无法获得用户位置，请检查设置。');
@@ -149,54 +96,89 @@ const getUserLocation = () => {
   } else {
     alert("抱歉，您的浏览器不支持地理定位。");
   }
-};
+  };
 
+  const fetchNearestScooters = async (userLocation) => {
+  try {
+    const { lat, lng } = userLocation; // Extract latitude and longitude from userLocation
+    const radius = 1000000000; // Search radius in meters
+    const response = await getNearestScootersAPI(lat, lng, radius);
+    nearbyScooters.value = response;
 
+    console.log("最近的滑板车:", nearbyScooters.value);
 
-const findNearbyScooters = (userLocation) => {
-  scooterMarkers.value.forEach(marker => marker.setMap(null));
-  scooterMarkers.value = [];
-  // 计算距离并筛选可用的滑板车
-  const scooterWithDistance = scooters.map(scooter => {
-    const distance = google.maps.geometry.spherical.computeDistanceBetween(
-      new google.maps.LatLng(userLocation.lat, userLocation.lng),
-      new google.maps.LatLng(scooter.location.lat, scooter.location.lng)
-    ) / 1000; // 转换为公里
-    return { ...scooter, distance: distance.toFixed(2) }; // 保留两位小数
-  }).filter(scooter => scooter.status === 'available'); // 只选择可用的滑板车
+    // Clear existing scooter markers
+    scooterMarkers.value.forEach(marker => marker.setMap(null));
+    scooterMarkers.value = [];
 
-  // 打印距离
-  console.log('滑板车距离:', scooterWithDistance.map(scooter => `${scooter.id}: ${scooter.distance} km`));
-
-
-  // 按距离排序并取前5个
-  nearbyScooters.value = scooterWithDistance.sort((a, b) => a.distance - b.distance).slice(0, 5);
-  // console.log('附近的滑板车:', nearbyScooters.value);
-  console.log("Check if map is defined:", map.value);
-  if (nearbyScooters.value.length > 0) {
-  const closestScooter = nearbyScooters.value[0];
-  map.value.setCenter(closestScooter.location);
-}
-  // Display the nearby scooters on the map
-  nearbyScooters.value.forEach(scooter => {
-    const marker = new google.maps.Marker({
-      position: scooter.location,
-      map: map.value,
-      title: `滑板车ID: ${scooter.id}`,
-      icon: {
+    // Add new markers for the fetched scooters
+    nearbyScooters.value.forEach(scooter => {
+      const marker = new google.maps.Marker({
+        position: { lat: scooter.locationLat, lng: scooter.locationLng },
+        map: map.value,
+        title: `滑板车ID: ${scooter.id}`,
+        icon: {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 5,
           fillColor: 'green',
           fillOpacity: 1,
-          strokeWeight: 1
-      }
+          strokeWeight: 1,
+        },
+      });
+
+      // Create an InfoWindow for the marker
+      const infoWindow = new google.maps.InfoWindow({
+        content: `
+          <div>
+            <h3>滑板车ID: ${scooter.id}</h3>
+            <p>状态: ${scooter.status}</p>
+            <p>距离: ${scooter.distance} km</p>
+          </div>
+        `,
+      });
+
+      // Add a click event listener to open the InfoWindow when the marker is clicked
+      marker.addListener('click', () => {
+        infoWindow.open(map.value, marker);
+      });
+
+      // Compute the nearest scooter from the scooter list
+      const distance = google.maps.geometry.spherical.computeDistanceBetween(
+        new google.maps.LatLng(lat, lng),
+        new google.maps.LatLng(scooter.locationLat, scooter.locationLng)
+      ) / 1000; // Convert to kilometers
+      scooter.distance = distance.toFixed(2); // Add distance to the scooter object
+      // Center the map to the nearest scooter
+      marker.setMap(map.value); 
+      scooterMarkers.value.push(marker);
+      console.log(`滑板车ID: ${scooter.id} - 距离: ${scooter.distance} km`);
+      map.value.setCenter({ lat: scooter.locationLat, lng: scooter.locationLng }); // Center map on the first scooter
     });
-    marker.setMap(map.value);
-    scooterMarkers.value.push(marker);
-  });
+  } catch (error) {
+    console.error("获取最近的滑板车失败:", error.response?.data || error);
+  }
 };
 
+  onMounted(() => {
+    fetchNearestScooters();
+  });
+  
+  const initMap = () => {
+    // 初始化地图
+    map.value = new google.maps.Map(document.getElementById('map'), {
+      center: { lat: 34.0522, lng: -118.2437 }, // 默认中心
+      zoom: 14,
+      mapId: "SCOOTER_MAP",
+    });
+  };
+  
+
 const centerToUserLocation = () => {
+  if(!map.value){
+    console.error("地图未初始化，请稍后再试。");
+    return;
+  }
+
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
       const userLocation = {
