@@ -6,9 +6,11 @@ import com.example.Scootify.service.BookingService;
 import com.example.Scootify.service.ScooterService;
 import com.example.Scootify.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/scooters")
@@ -37,13 +39,20 @@ public class ScooterController {
         scooterService.addScooter(scooter);
     }
 
-    // 创建预订
-    @PostMapping("/bookings")
-    public Booking createBooking(@RequestParam Long userId, @RequestParam String scooterId, @RequestParam int durationInHours) {
-        String additionalInfo = "defaultInfo"; // Replace with appropriate value
-        return bookingService.createBooking(userId, scooterId, durationInHours, additionalInfo);
-    }
 
+    // 创建预订
+    @GetMapping("/bookings")
+    public Booking createBooking(
+        @RequestParam Long userId,
+        @RequestParam String scooterId,
+        @RequestParam int durationInHours,
+        @RequestParam String cardNumber
+    ) {
+        System.out.println("Received booking request: "
+            + userId + ", " + scooterId + ", " + durationInHours + ", " + cardNumber);
+    
+        return bookingService.createBooking(userId, scooterId, durationInHours, cardNumber);
+    }
     // 取消预订
     @DeleteMapping("/bookings/{id}")
     public void cancelBooking(@PathVariable Long id) {
@@ -56,3 +65,6 @@ public class ScooterController {
         return bookingService.getUserBookings(userId);
     }
 }
+
+
+// Removed GlobalExceptionHandler class from this file.

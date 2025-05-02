@@ -29,15 +29,19 @@ public class BookingService {
     private EmailService emailService; // 用于发送邮件
 
     public Booking createBooking(Long userId, String scooterId, int durationInHours, String cardNumber) {
-        User user = userRepository.findById(userId)
-                                  .orElseThrow(() -> new RuntimeException("User not found")); // 查找用户
-        Scooter scooter = scooterRepository.findById(scooterId)
-                                            .orElseThrow(() -> new RuntimeException("Scooter not found")); // 查找滑板车
-        // 1小时	$10
-        // 4小时	$30
-        //1天	$50
-        // 1周	$200
-        // calculate price based on duration
+        System.out.println("Service Received booking request: "
+            + userId + ", " + scooterId + ", " + durationInHours + ", " + cardNumber);
+            User user = userRepository.findById(userId)
+            .orElseThrow(() -> {
+                System.out.println("User not found: " + userId);
+                return new RuntimeException("User not found");
+            });
+            Scooter scooter = scooterRepository.findById(scooterId)
+            .orElseThrow(() -> {
+                System.out.println("Scooter not found: " + scooterId);
+                return new RuntimeException("Scooter not found");
+            });
+                                            
         double cost = 0;
         if (durationInHours == 1) {
             cost = 10;
@@ -51,9 +55,10 @@ public class BookingService {
             throw new RuntimeException("Invalid duration");
         }
         // 处理支付
-        if (!processPayment(cardNumber, cost)) {
-            throw new RuntimeException("Payment failed");
-        }
+        // if (!processPayment(cardNumber, cost)) {
+        //     System.out.println("Payment failed for card: " + cardNumber);
+        //     throw new RuntimeException("Payment failed");
+        // }
 
         Booking booking = new Booking();
         booking.setStartTime(LocalDateTime.now()); // 设置开始时间
@@ -66,8 +71,8 @@ public class BookingService {
         scooterRepository.save(scooter); // 保存滑板车状态
 
         // 发送确认邮件
-        emailService.sendEmail(user.getEmail(), "Booking Confirmation",
-            "Your booking for scooter " + scooterId + " is confirmed. Start time: " + booking.getStartTime());
+        // emailService.sendEmail(user.getEmail(), "Booking Confirmation",
+        //     "Your booking for scooter " + scooterId + " is confirmed. Start time: " + booking.getStartTime());
 
         return bookingRepository.save(booking); // 保存预订
     }

@@ -6,10 +6,15 @@ import { scooter } from "@/utils/http";
  * @param {String} duration 预订时长
  * @return {Promise} 返回预订结果
  */
-export function Booking(Booking, scooterId, duration) {
-    return scooter.post('/bookings', {
-        scooterId,
-        duration,
+export function Booking(userId, scooterId, durationInHours, cardNumber) {
+    console.log('Booking data:', { userId, scooterId, durationInHours, cardNumber }); // 打印预订数据
+    return scooter.get('/bookings', {
+        params: {
+            userId,
+            scooterId,
+            durationInHours,
+            cardNumber
+        }
     });
 }
 
@@ -30,7 +35,5 @@ export function getUserBookingsAPI(userId) {
  * @return {Promise} 返回取消结果
  */
 export function cancelBookingAPI(bookingId) {
-    return scooter.delete('/cancel-booking', {
-        params: { bookingId },
-    });
+    return scooter.delete(`/bookings/${bookingId}`); // 使用路径参数
 }

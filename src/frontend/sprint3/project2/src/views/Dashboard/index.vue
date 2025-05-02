@@ -57,6 +57,11 @@
               <option v-for="option in options" :key="option.value" :value="option.value">{{ option.text }}</option>
             </select>
           </div>
+
+          <div class="input-field">
+            <label for="cardNumber">Card Number:</label>
+            <input type="text" id="cardNumber" v-model="cardNumber" placeholder="Enter your card number" />
+          </div>
         </div>
   
         <button class="book-button" @click="bookScooter">Book Scooter</button>
@@ -278,16 +283,17 @@ const centerToUserLocation = () => {
   });
   
   // 预订功能
+  const cardNumber = ref('');
   const scooterId = ref('');
   const selectedDuration = ref('1小时');
   const bookings = ref([]);
   // const options = ['1 hour', '4 hour', '1 day', '1 week'];
   // key value pair for options
   const options = [
-    { text: '1 hour', value: '1' },
-    { text: '4 hour', value: '4' },
-    { text: '1 day', value: '24' },
-    { text: '1 week', value: '168' },
+    { text: '1 hour', value: 1 },
+    { text: '4 hour', value: 4 },
+    { text: '1 day', value: 24 },
+    { text: '1 week', value: 168 },
   ];
   const prices = {
     '1 hour': 10,
@@ -302,15 +308,15 @@ const centerToUserLocation = () => {
       return;
     }
     console.log('Booking scooter with ID:', scooterId.value, 'for duration:', selectedDuration.value);
-    const userId = store.getters.user; // Get the user ID from Vuex store
+    const userId = store.getters.user?.id; // Get the user ID from Vuex store
     console.log('User ID:', userId);
-    const response = await Booking(userId, scooterId.value, selectedDuration.value);
+    const response = await Booking(userId, scooterId.value, selectedDuration.value, cardNumber.value);
     if (response) {
       bookings.value.push(response);
       scooterId.value = ''; // Clear the input field after booking
       selectedDuration.value = '1 hour'; // Reset to default duration
     } else {
-      alert('if booking failed, please try again later');
+      alert('if booking failed, please try again later'); 
     }
   };
   
