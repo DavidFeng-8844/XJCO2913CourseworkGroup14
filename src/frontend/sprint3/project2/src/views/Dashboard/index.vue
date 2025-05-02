@@ -2,15 +2,15 @@
     <div class="dashboard-container">
       <LayoutHeader :is-transparent="false" />
   
-      <h1 class="title">用户仪表盘</h1>
+      <h1 class="title">User Dashboard</h1>
   
       <div class="section hire-options-section">
-        <h2>租赁选项和成本</h2>
+        <h2>Options and Costs</h2>
         <table>
           <thead>
             <tr>
-              <th>租赁时间</th>
-              <th>成本</th>
+              <th>Time</th>
+              <th>Price</th>
             </tr>
           </thead>
           <tbody>
@@ -23,14 +23,14 @@
       </div>
   
       <div class="section app">
-        <h1>滑板车预订系统</h1>
+        <h1>Scooter Maps</h1>
         <div id="map" ref="map" style="height: 500px;"></div>
         <button class="getUserLocation" @click="getUserLocation">Find Nearest Scooter</button>
         <!-- get all scooters -->
-        <button class="getUserLocation" @click="fetchAllScooters">Find all fetchNearestScooters</button>
+        <button class="getUserLocation" @click="">Find all fetchNearestScooters</button>
         <!-- center to user location -->
         <button class="getUserLocation" @click="centerToUserLocation">Center map to my Location</button>
-        <h2>可用滑板车列表</h2>
+        <h2>Avaliable Scooters</h2>
         <ul>
           <li v-for="scooter in nearbyScooters" :key="scooter.id" class="scooter-item">
             <div>
@@ -38,36 +38,51 @@
               Status: {{ scooter.status }} -
               Distance: {{ scooter.distance }} km
             </div>
-            <button class="book-button" @click="goToBooking(scooter.id)">预定</button>
+            <button class="book-button" @click="goToBooking(scooter.id)">Book</button>
           </li>
         </ul>
       </div>
   
       <div class="section booking-section">
-        <h2>预订电子滑板车</h2>
+        <h2>Book</h2>
         <div class="input-container">
           <div class="input-field">
-            <label for="scooterId">滑板车ID:</label>
+            <label for="scooterId">Scooter ID:</label>
             <input type="text" id="scooterId" v-model="scooterId" />
           </div>
   
           <div class="input-field">
-            <label for="duration">租赁期限:</label>
+            <label for="duration">Duration:</label>
             <select id="duration" v-model="selectedDuration">
               <option v-for="option in options" :key="option" :value="option">{{ option }}</option>
             </select>
           </div>
         </div>
   
-        <button class="book-button" @click="bookScooter">预订滑板车</button>
-  
-        <h2>预订确认</h2>
-        <ul class="booking-list">
-          <li v-for="(booking, index) in bookings" :key="index" class="booking-item">
-            滑板车ID: {{ booking.scooterId }} - 租赁期限: {{ booking.duration }} - 状态: {{ booking.status }}
-            <button class="cancel-button" @click="cancelBooking(index)">取消预订</button>
-          </li>
-        </ul>
+        <button class="book-button" @click="bookScooter">Book Scooter</button>
+
+        <!-- use radio box to select if new user -->
+        <div class="input-field">
+          <input type="checkbox" id="newUser" value="new" v-model="isNewUser" /> New User
+        </div>
+        <div v-if="isNewUser">
+          <div class="input-field">
+            <label for="name">Name:</label>
+            <input type="text" id="name" v-model="newUser.name" />
+          </div>
+          <div class="input-field">
+            <label for="email">Email:</label>
+            <input type="email" id="email" v-model="newUser.email" />
+          </div>
+        </div>
+        <div class="section my-bookings-section">
+          <h2>My booking</h2>
+          <ul>
+            <li v-for="booking in myBookings" :key="booking.id">
+            ID: {{ booking.scooterId }} - Status: {{ booking.status }} - Start Time: {{ booking.startTime }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </template>
@@ -76,16 +91,23 @@
   import { ref, computed, onMounted } from 'vue';
   import LayoutHeader from '@/views/Layout/components/LayoutHeader.vue';
   import { getNearestScootersAPI } from "@/apis/scooter";
+  // import { Booking } from "@/apis/booking"; // Import the Booking API function
   // import { getAllScootersAPI } from "@/apis/scooter"; // Import the API function to fetch all scooters
   
   // const map = ref();
   let map;
-  const userMarker = ref(null);
+  const userMarker = ref(false);
   const nearbyScooters = ref([]); 
   const scooterMarkers = ref([]);
   const allScooters = ref([]); // Store all scooters
   const allScooterMarkers = ref([]); // Store all scooter markers
-  
+  const registeredUsers = ref([]); // Store registered users
+  const isNewUser = ref(''); // Default to empty or 'new'
+  const newUser = ref({
+    name: '',
+    email: '',
+  });
+
   const getUserLocation = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
@@ -180,43 +202,13 @@
         lat: nearestScooter.locationLat,
         lng: nearestScooter.locationLng,
       });
-      map.value.setZoom(15); // Zoom in on the nearest scooter
+      map.value.setZoom(14); // Zoom in on the nearest scooter
       }
     });
   } catch (error) {
     console.error("获取最近的滑板车失败:", error.response?.data || error);
   }
 };
-
-  const fetchAllScooters = async () => {
-    try {
-      const response = await getAllScootersAPI();
-
-      // compute distances and add them to the scooter objects
-      allScooters.value = response.map(scooter => {
-        const distance = google.maps.geometry.spherical.computeDistanceBetween(
-          new google.maps.LatLng(userMarker.value.getPosition().lat(), userMarker.value.getPosition().lng()),
-          new google.maps.LatLng(scooter.locationLat, scooter.locationLng)
-        ) / 1000; // Convert to kilometers
-        return {
-          ...scooter,
-          distance: distance.toFixed(2), // Add distance property
-        };
-      });
-      // Sort scooters by distance
-      allScooters.value.sort((a, b) => a.distance - b.distance);
-
-      // Clear existing scooter markers
-      allScooterMarkers.value.forEach(marker => marker.setMap(null));
-      allScooterMarkers.value = [];
-      
-      // Add new markers for the fetched scooters
-
-      console.log("所有滑板车:", response);
-    } catch (error) {
-      console.error("获取所有滑板车失败:", error.response?.data || error);
-    }
-  };
 
   const initMap = () => {
     // 初始化地图
@@ -268,7 +260,7 @@ const centerToUserLocation = () => {
         userInfoWindow.open(map.value, userMarker.value);
       });
       map.value.setCenter(userLocation); // 设置地图中心为用户位置
-      map.value.setZoom(20); // 放大地图
+      map.value.setZoom(15); // 放大地图
     }, error => {
       console.error('获取位置失败:', error.message);
       alert('无法获得用户位置，请检查设置。');
@@ -279,39 +271,35 @@ const centerToUserLocation = () => {
 };
 
   
-  const goToBooking = (scooterId) => {
-    // 跳转到预定页面的逻辑
-    console.log(`预定滑板车: ${scooterId}`);
-  };
-  
-  onMounted(() => {
+  onMounted( async() => {
     initMap();
-    fetchNearestScooters();
   });
   
   // 预订功能
   const scooterId = ref('');
   const selectedDuration = ref('1小时');
   const bookings = ref([]);
-  const options = ['1小时', '4小时', '1天', '1周'];
+  const options = ['1 hour', '4 hour', '1 day', '1 week'];
   const prices = {
-    '1小时': 10,
-    '4小时': 30,
-    '1天': 50,
-    '1周': 200,
+    '1 hour': 10,
+    '4 hour': 30,
+    '1 day': 50,
+    '1 week': 200,
   };
   
-  const bookScooter = () => {
+  const bookScooter = async () => {
     if (!scooterId.value) {
       alert('请输入滑板车ID');
       return;
     }
-    bookings.value.push({
-      scooterId: scooterId.value,
-      duration: selectedDuration.value,
-      status: '已预订',
-    });
-    scooterId.value = '';
+    const response = await Booking(scooterId.value, selectedDuration.value);
+    if (response) {
+      bookings.value.push(response);
+      scooterId.value = ''; // Clear the input field after booking
+      selectedDuration.value = '1 hour'; // Reset to default duration
+    } else {
+      alert('if booking failed, please try again later');
+    }
   };
   
   const cancelBooking = (index) => {

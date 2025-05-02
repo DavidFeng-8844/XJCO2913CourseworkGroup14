@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @Service
 public class BookingService {
     
@@ -24,12 +25,36 @@ public class BookingService {
     @Autowired
     private ScooterRepository scooterRepository; // 用于查找滑板车
 
-    public Booking createBooking(Long userId, String scooterId, int durationInHours) {
+    @Autowired
+    private EmailService emailService; // 用于发送邮件
+
+    public Booking createBooking(Long userId, String scooterId, int durationInHours, String cardNumber) {
         User user = userRepository.findById(userId)
                                   .orElseThrow(() -> new RuntimeException("User not found")); // 查找用户
         Scooter scooter = scooterRepository.findById(scooterId)
                                             .orElseThrow(() -> new RuntimeException("Scooter not found")); // 查找滑板车
-        
+        // 1小时	$10
+        // 4小时	$30
+        //1天	$50
+        // 1周	$200
+        // calculate price based on duration
+        double cost = 0;
+        if (durationInHours == 1) {
+            cost = 10;
+        } else if (durationInHours == 4) {
+            cost = 30;
+        } else if (durationInHours == 24) {
+            cost = 50;
+        } else if (durationInHours == 168) {
+            cost = 200;
+        } else {
+            throw new RuntimeException("Invalid duration");
+        }
+        // 处理支付
+        if (!processPayment(cardNumber, cost)) {
+            throw new RuntimeException("Payment failed");
+        }
+
         Booking booking = new Booking();
         booking.setStartTime(LocalDateTime.now()); // 设置开始时间
         booking.setEndTime(LocalDateTime.now().plusHours(durationInHours)); // 设置结束时间为1小时后
@@ -39,6 +64,10 @@ public class BookingService {
 
         scooter.setStatus("unavailable"); // 设置滑板车状态为 "unavailable"
         scooterRepository.save(scooter); // 保存滑板车状态
+
+        // 发送确认邮件
+        emailService.sendEmail(user.getEmail(), "Booking Confirmation",
+            "Your booking for scooter " + scooterId + " is confirmed. Start time: " + booking.getStartTime());
 
         return bookingRepository.save(booking); // 保存预订
     }
@@ -64,5 +93,15 @@ public class BookingService {
     
     public List<Booking> getUserBookings(Long userId) {
         return bookingRepository.findByUserId(userId); // 查找用户的所有预订
+    }
+
+    public boolean processPayment(String cardNumber, double amount) {
+        // Simulate payment processing
+        if (cardNumber != null && cardNumber.length() == 16) {
+            System.out.println("Payment of $" + amount + " processed successfully for card: " + cardNumber);
+            return true;
+        } else {
+            throw new RuntimeException("Invalid card details");
+        }
     }
 }

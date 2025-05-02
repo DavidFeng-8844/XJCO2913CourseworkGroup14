@@ -40,7 +40,8 @@ public class ScooterController {
     // 创建预订
     @PostMapping("/bookings")
     public Booking createBooking(@RequestParam Long userId, @RequestParam String scooterId, @RequestParam int durationInHours) {
-        return bookingService.createBooking(userId, scooterId, durationInHours);
+        String additionalInfo = "defaultInfo"; // Replace with appropriate value
+        return bookingService.createBooking(userId, scooterId, durationInHours, additionalInfo);
     }
 
     // 取消预订
