@@ -41,6 +41,10 @@ public class BookingService {
                 System.out.println("Scooter not found: " + scooterId);
                 return new RuntimeException("Scooter not found");
             });
+
+        if ("unavailable".equals(scooter.getStatus())) {
+            throw new RuntimeException("Scooter is already unavailable.");
+        }
                                             
         double cost = 0;
         if (durationInHours == 1) {
