@@ -74,20 +74,6 @@ public class UserService {
             this.user = user;
         }
     }
-
-    // public void registerAdmin(String username, String password, String secretKey) {
-    //     // 验证提供的密钥
-    //     if (!adminSecretKey.equals(secretKey)) {
-    //         throw new RuntimeException("Invalid secret key for admin registration");
-    //     }
-
-    //     User adminUser = new User();
-    //     adminUser.setUsername(username);
-    //     adminUser.setPassword(passwordEncoder.encode(password)); // 加密密码
-    //     adminUser.getRoles().add("ROLE_ADMIN"); // 设置管理员角色
-
-    //     userRepository.save(adminUser); // 保存管理员用户
-    // }
     
     public LoginResponse login(String username, String password) {
         User user = userRepository.findByUsername(username);

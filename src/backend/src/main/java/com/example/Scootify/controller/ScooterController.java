@@ -51,7 +51,7 @@ public class ScooterController {
     }
 
     // 获取用户的所有预订
-    @GetMapping("/bookings")
+    @GetMapping("/get-bookings")
     public List<Booking> getUserBookings(@RequestParam Long userId) {
         return bookingService.getUserBookings(userId);
     }

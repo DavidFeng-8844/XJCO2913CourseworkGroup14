@@ -54,7 +54,7 @@
           <div class="input-field">
             <label for="duration">Duration:</label>
             <select id="duration" v-model="selectedDuration">
-              <option v-for="option in options" :key="option" :value="option">{{ option }}</option>
+              <option v-for="option in options" :key="option.value" :value="option.value">{{ option.text }}</option>
             </select>
           </div>
         </div>
@@ -63,7 +63,7 @@
 
         <!-- use radio box to select if new user -->
         <div class="input-field">
-          <input type="checkbox" id="newUser" value="new" v-model="isNewUser" /> New User
+          <input type="checkbox" id="newUser" value="new" v-model="isNewUser" />New User
         </div>
         <div v-if="isNewUser">
           <div class="input-field">
@@ -89,9 +89,10 @@
   
   <script setup>
   import { ref, computed, onMounted } from 'vue';
+  import { useStore } from 'vuex';
   import LayoutHeader from '@/views/Layout/components/LayoutHeader.vue';
   import { getNearestScootersAPI } from "@/apis/scooter";
-  // import { Booking } from "@/apis/booking"; // Import the Booking API function
+  import { Booking, getUserBookingsAPI, cancelBookingAPI } from "@/apis/booking";
   // import { getAllScootersAPI } from "@/apis/scooter"; // Import the API function to fetch all scooters
   
   // const map = ref();
@@ -99,6 +100,7 @@
   const userMarker = ref(false);
   const nearbyScooters = ref([]); 
   const scooterMarkers = ref([]);
+  const store = useStore();
   const allScooters = ref([]); // Store all scooters
   const allScooterMarkers = ref([]); // Store all scooter markers
   const registeredUsers = ref([]); // Store registered users
@@ -279,7 +281,14 @@ const centerToUserLocation = () => {
   const scooterId = ref('');
   const selectedDuration = ref('1小时');
   const bookings = ref([]);
-  const options = ['1 hour', '4 hour', '1 day', '1 week'];
+  // const options = ['1 hour', '4 hour', '1 day', '1 week'];
+  // key value pair for options
+  const options = [
+    { text: '1 hour', value: '1' },
+    { text: '4 hour', value: '4' },
+    { text: '1 day', value: '24' },
+    { text: '1 week', value: '168' },
+  ];
   const prices = {
     '1 hour': 10,
     '4 hour': 30,
@@ -292,7 +301,10 @@ const centerToUserLocation = () => {
       alert('请输入滑板车ID');
       return;
     }
-    const response = await Booking(scooterId.value, selectedDuration.value);
+    console.log('Booking scooter with ID:', scooterId.value, 'for duration:', selectedDuration.value);
+    const userId = store.getters.user; // Get the user ID from Vuex store
+    console.log('User ID:', userId);
+    const response = await Booking(userId, scooterId.value, selectedDuration.value);
     if (response) {
       bookings.value.push(response);
       scooterId.value = ''; // Clear the input field after booking

@@ -1,6 +1,7 @@
 // stores/index.js
 import { createStore } from 'vuex';
 import { loginAPI } from '@/apis/user'; // 确保正确引入你的 loginAPI
+// import { id } from 'element-plus/es/locale';
 
 
 const store = createStore({
@@ -17,6 +18,7 @@ const store = createStore({
       state.isLoggedIn = true;
       // state.user = user; // 存储用户信息
       state.user = {
+        id: user.id,           // 确保获取的 id 字段
         username: user.username, // 确保获取的 username 字段
         email: user.email,       // 确保获取的 email 字段
         roles: user.roles,       // 确保获取的 roles 字段
