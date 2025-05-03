@@ -372,7 +372,11 @@ const centerToUserLocation = () => {
                     price = 50;
                 } else if (durationInHours <= 168) {
                     price = 200;
+                }//超过一周在基础上以之前的价格计算
+                else {
+                    price = 200 + (durationInHours - 168) * 10; // 每小时10美元
                 }
+
 
                 console.log(`Booking ID: ${booking.id}`);
                 console.log(`Start Time: ${startTime}`);
