@@ -7,7 +7,7 @@ import { scooter } from "@/utils/http";
  * @return {Promise} 返回预订结果
  */
 export function Booking(userId, scooterId, durationInHours, cardNumber) {
-    console.log('Booking data:', { userId, scooterId, durationInHours, cardNumber }); // 打印预订数据
+    // console.log('Booking data:', { userId, scooterId, durationInHours, cardNumber }); // 打印预订数据
     return scooter.get('/bookings', {
         params: {
             userId,

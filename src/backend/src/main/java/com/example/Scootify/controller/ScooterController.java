@@ -6,6 +6,7 @@ import com.example.Scootify.service.BookingService;
 import com.example.Scootify.service.ScooterService;
 import com.example.Scootify.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,13 +56,19 @@ public class ScooterController {
     }
     // 取消预订
     @DeleteMapping("/bookings/{id}")
-    public void cancelBooking(@PathVariable Long id) {
-        bookingService.cancelBooking(id);
+    public ResponseEntity<String> cancelBooking(@PathVariable Long id) {
+        try {
+            bookingService.cancelBooking(id);
+            return ResponseEntity.ok("Booking canceled successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to cancel booking: " + e.getMessage());
+        }
     }
 
     // 获取用户的所有预订
     @GetMapping("/get-bookings")
     public List<Booking> getUserBookings(@RequestParam Long userId) {
+        System.out.println("Received request to get bookings for user: " + userId);
         return bookingService.getUserBookings(userId);
     }
 }

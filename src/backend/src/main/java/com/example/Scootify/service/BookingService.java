@@ -96,7 +96,13 @@ public class BookingService {
     }
 
     public void cancelBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+            .orElseThrow(() -> new RuntimeException("Booking not found"));
+        Scooter scooter = booking.getScooter();
+        scooter.setStatus("available"); // 设置滑板车状态为 "available"
+        scooterRepository.save(scooter); // 保存滑板车状态
         bookingRepository.deleteById(bookingId); // 根据 ID 取消预订
+
     }
 
     

@@ -2,6 +2,9 @@ package com.example.Scootify.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -12,16 +15,27 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    // @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user; // 关联合同的用户
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "scooter_id")
+    @JsonIgnore
     private Scooter scooter; // 关联合同的滑板车
 
-    private String status; // 预订状态，比如 "active", "cancelled"
+    @JsonProperty("scooter_id")
+    public String getScooterId() {
+        return scooter != null ? scooter.getId() : null;
+    }
+
+    @JsonProperty("status")
+    private String status;
+    @JsonProperty("start_time")
     private LocalDateTime startTime; // 预订开始时间
+    @JsonProperty("end_time")
     private LocalDateTime endTime; // 预订结束时间
 
     // 构造函数

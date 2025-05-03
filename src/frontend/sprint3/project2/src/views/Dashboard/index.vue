@@ -38,7 +38,6 @@
               Status: {{ scooter.status }} -
               Distance: {{ scooter.distance }} km
             </div>
-            <button class="book-button" @click="goToBooking(scooter.id)">Book</button>
           </li>
         </ul>
       </div>
@@ -81,10 +80,12 @@
           </div>
         </div>
         <div class="section my-bookings-section">
+          <button class="book-button" @click="getMyBookings">Get My Bookings</button>
           <h2>My booking</h2>
           <ul>
             <li v-for="booking in myBookings" :key="booking.id">
-            ID: {{ booking.scooterId }} - Status: {{ booking.status }} - Start Time: {{ booking.startTime }}
+            ID: {{ booking.scooter_id }} - Status: {{ booking.status }} - Start Time: {{ booking.startTime }} - End Time: {{ booking.endTime }} - Duration: {{ booking.durationInHours }} hours - Price: ${{ booking.price }}
+              <button class="cancel-button" @click="cancelBooking(booking.id)">Cancel</button>
             </li>
           </ul>
         </div>
@@ -106,6 +107,7 @@
   const nearbyScooters = ref([]); 
   const scooterMarkers = ref([]);
   const store = useStore();
+  const myBookings = ref([]); // Store user's bookings
   const allScooters = ref([]); // Store all scooters
   const allScooterMarkers = ref([]); // Store all scooter markers
   const registeredUsers = ref([]); // Store registered users
@@ -320,9 +322,76 @@ const centerToUserLocation = () => {
     }
   };
   
-  const cancelBooking = (index) => {
-    bookings.value.splice(index, 1);
+  
+  const cancelBooking = async (bookingId) => {
+    console.log('Canceling booking with ID:', bookingId);
+    try {
+      const response = await cancelBookingAPI(bookingId); // Call the API to cancel the booking
+      console.log('Cancel booking response:', response);
+      if (response) {
+        myBookings.value = myBookings.value.filter(booking => booking.id !== bookingId); // Remove the canceled booking from the list
+        alert('Booking canceled successfully!');
+      } else {
+        alert('Failed to cancel booking, please try again later.');
+      }
+    } catch (error) {
+      console.error('Cancel booking failed:', error.response?.data || error.message);
+      alert('Cancel booking failed, please try again later.');
+    }
   };
+
+  const getMyBookings = async () => {
+    const userId = store.getters.user?.id; // 从 Vuex 获取用户 ID
+    console.log('User ID:', userId);
+
+    try {
+        const response = await getUserBookingsAPI(userId); // 调用 API 获取预订信息
+        console.log('My bookings:', response);
+
+        if (response) {
+            // 遍历预订信息，计算价格并打印开始时间和结束时间
+            myBookings.value = response.map(booking => {
+                const startTime = new Date(booking.start_time); // 转换为 Date 对象
+                const endTime = new Date(booking.end_time); // 转换为 Date 对象
+                const durationInHours = (endTime - startTime) / (1000 * 60 * 60); // 计算时长（小时）
+
+                // 根据时长计算价格
+                let price = 0;
+                if (durationInHours <= 1) {
+                    price = 10;
+                } else if (durationInHours <= 4) {
+                    price = 30;
+                } else if (durationInHours <= 24) {
+                    price = 50;
+                } else if (durationInHours <= 168) {
+                    price = 200;
+                }
+
+                console.log(`Booking ID: ${booking.id}`);
+                console.log(`Start Time: ${startTime}`);
+                console.log(`End Time: ${endTime}`);
+                console.log(`Duration (hours): ${durationInHours}`);
+                console.log(`Price: $${price}`);
+
+                // 返回扩展后的预订对象
+                return {
+                    ...booking,
+                    startTime,
+                    endTime,
+                    durationInHours,
+                    price,
+                };
+            });
+        } else {
+            alert('获取我的预订失败，请稍后再试。');
+        }
+    } catch (error) {
+        console.error('获取预订信息失败:', error.response?.data || error.message);
+        alert('获取预订信息失败，请稍后再试。');
+    }
+};
+
+
   </script>
   
   <style scoped>
@@ -468,4 +537,44 @@ const centerToUserLocation = () => {
     cursor: pointer;
     transition: background-color 0.3s;
   }
+
+  .my-bookings-section {
+  margin-top: 20px;
+}
+
+.booking-item.even-row {
+  background-color: #aec5d4; /* 浅灰色背景 */
+}
+
+.booking-item.odd-row {
+  background-color: #b8a486; /* 白色背景 */
+}
+
+.booking-item:hover {
+  background-color: #f1f1f1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.booking-info {
+  flex: 1;
+}
+
+.booking-info p {
+  margin: 5px 0;
+  color: #333;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cancel-button:hover {
+  background-color: #c82333;
+}
   </style>

@@ -8320,3 +8320,6 @@ select s1_0.id,s1_0.location_lat,s1_0.location_lng,s1_0.status from scooters s1_
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
 	at java.base/java.lang.Thread.run(Thread.java:1583)
+2025-05-03 17:01:14.194069+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""BOOKINGS"""; expected "identifier"; SQL statement:
+DELETE * FROM "BOOKINGS" [42001-232]
