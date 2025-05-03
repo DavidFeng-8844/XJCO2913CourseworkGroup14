@@ -9,8 +9,13 @@ import com.example.Scootify.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Scheduled;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Map;
 
 
 @Service
@@ -108,7 +113,10 @@ public class BookingService {
     public void extendBooking(Long bookingId, int additionalHours) {
         Booking booking = bookingRepository.findById(bookingId)
             .orElseThrow(() -> new RuntimeException("Booking not found"));
+        booking.checkAndUpdateStatus(); // 检查并更新预订状态
         LocalDateTime newEndTime = booking.getEndTime().plusHours(additionalHours); // 延长预订时间
+        // set booking status to active
+        booking.setStatus("active"); // 设置状态为 "active"
         booking.setEndTime(newEndTime); // 更新预订结束时间
         bookingRepository.save(booking); // 保存更新后的预订
     }
@@ -127,4 +135,66 @@ public class BookingService {
             throw new RuntimeException("Invalid card details");
         }
     }
+
+    // @Scheduled(cron = "0 0 * * * ?") // 每小时执行一次
+    // 每十秒执行一次
+    @Scheduled(fixedRate = 1000) // 每十秒执行一次
+    public void updateBookingStatuses() {
+        List<Booking> bookings = bookingRepository.findAll();
+        for (Booking booking : bookings) {
+            booking.checkAndUpdateStatus(); // 检查并更新状态
+            bookingRepository.save(booking); // 保存更新后的状态
+        }
+    }
+
+    public Map<String, Double> calculateWeeklyIncomeByRentalOption() {
+    List<Booking> bookings = bookingRepository.findAll();
+    LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+    // print bookings
+    System.out.println("Bookings in the last week: " + bookings.stream()
+        .filter(booking -> booking.getStartTime().isAfter(oneWeekAgo))
+        .collect(Collectors.toList()));
+    // print oneWeekAgo
+    return bookings.stream()
+        .filter(booking -> booking.getStartTime().isAfter(oneWeekAgo))
+        .collect(Collectors.groupingBy(
+            booking -> {
+                long duration = ChronoUnit.HOURS.between(booking.getStartTime(), booking.getEndTime());
+                if (duration == 1) return "1 hour";
+                else if (duration == 4) return "4 hours";
+                else if (duration == 24) return "1 day";
+                else if (duration == 168) return "1 week";
+                else return "Other";
+            },
+            Collectors.summingDouble(booking -> {
+                long duration = ChronoUnit.HOURS.between(booking.getStartTime(), booking.getEndTime());
+                if (duration == 1) return 10;
+                else if (duration == 4) return 30;
+                else if (duration == 24) return 50;
+                else if (duration == 168) return 200;
+                else return 0;
+            })
+        ));
+    }
+
+    public Map<LocalDate, Double> calculateDailyIncomeOverWeek() {
+        List<Booking> bookings = bookingRepository.findAll();
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        
+
+        return bookings.stream()
+            .filter(booking -> booking.getStartTime().isAfter(oneWeekAgo))
+            .filter(booking -> ChronoUnit.HOURS.between(booking.getStartTime(), booking.getEndTime()) != 168) // Exclude 1-week hires
+            .collect(Collectors.groupingBy(
+                booking -> booking.getStartTime().toLocalDate(),
+                Collectors.summingDouble(booking -> {
+                    long duration = ChronoUnit.HOURS.between(booking.getStartTime(), booking.getEndTime());
+                    if (duration == 1) return 10;
+                    else if (duration == 4) return 30;
+                    else if (duration == 24) return 50;
+                    else return 0;
+                })
+            ));
+    }
+    
 }

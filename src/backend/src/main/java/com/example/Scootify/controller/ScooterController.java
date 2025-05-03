@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +85,23 @@ public class ScooterController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to extend booking: " + e.getMessage());
         }
     }
+
+    // 获取每种租赁选项的每周收入
+    @GetMapping("/weekly-income")
+    public Map<String, Double> getWeeklyIncomeByRentalOption() {
+        System.out.println("Received request to calculate weekly income by rental option.");
+        Map<String, Double> incomeMap = bookingService.calculateWeeklyIncomeByRentalOption();
+        System.out.println("Weekly income by rental option: " + incomeMap);
+        return incomeMap;
+    }
+
+    // 获取过去一周的每日收入
+    @GetMapping("/daily-income")
+    public Map<LocalDate, Double> getDailyIncomeOverWeek() {
+        System.out.println("Received request to calculate daily income over the past week.");
+        return bookingService.calculateDailyIncomeOverWeek();
+    }
+    
 }
 
 

@@ -55,3 +55,20 @@ export function extendBookingAPI(bookingId, additionalHours) {
         }
     });
 }
+
+
+/**
+ * @description: 获取每种租赁选项的每周收入
+ * @return {Promise} 返回每种租赁选项的收入数据
+ */
+export function getWeeklyIncomeAPI() {
+    return scooter.get('/weekly-income');
+}
+
+/**
+ * @description: 获取过去一周的每日收入
+ * @return {Promise} 返回每日收入数据
+ */
+export function getDailyIncomeAPI() {
+    return scooter.get('/daily-income');
+}

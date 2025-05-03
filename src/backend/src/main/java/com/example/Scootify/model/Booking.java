@@ -89,4 +89,12 @@ public class Booking {
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
 }
+
+    public void checkAndUpdateStatus() {
+        if (endTime != null && LocalDateTime.now().isAfter(endTime)) {
+            this.status = "expired"; // 设置状态为过期
+        } else {
+            this.status = "active"; // 设置状态为活动中
+        }
+}
 }
