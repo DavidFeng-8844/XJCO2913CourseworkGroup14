@@ -105,6 +105,14 @@ public class BookingService {
 
     }
 
+    public void extendBooking(Long bookingId, int additionalHours) {
+        Booking booking = bookingRepository.findById(bookingId)
+            .orElseThrow(() -> new RuntimeException("Booking not found"));
+        LocalDateTime newEndTime = booking.getEndTime().plusHours(additionalHours); // 延长预订时间
+        booking.setEndTime(newEndTime); // 更新预订结束时间
+        bookingRepository.save(booking); // 保存更新后的预订
+    }
+
     
     public List<Booking> getUserBookings(Long userId) {
         return bookingRepository.findByUserId(userId); // 查找用户的所有预订

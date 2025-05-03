@@ -37,3 +37,21 @@ export function getUserBookingsAPI(userId) {
 export function cancelBookingAPI(bookingId) {
     return scooter.delete(`/bookings/${bookingId}`); // 使用路径参数
 }
+
+
+/**
+ * * @description: extend booking time
+ * @param {String} bookingId 预订ID
+ * @param {Number} durationInHours 预订时长
+ * @return {Promise} 返回预订结果
+ */
+
+export function extendBookingAPI(bookingId, additionalHours) {
+    console.log('Extend booking data:', { bookingId, additionalHours }); // 打印预订数据
+    return scooter.get('/extend-booking', {
+        params: {
+            bookingId,
+            additionalHours
+        }
+    });
+}

@@ -27,9 +27,9 @@
         <div id="map" ref="map" style="height: 500px;"></div>
         <button class="getUserLocation" @click="getUserLocation">Find Nearest Scooter</button>
         <!-- get all scooters -->
-        <button class="getUserLocation" @click="">Find all fetchNearestScooters</button>
+        <!-- <button class="getUserLocation" @click="">Find all fetchNearestScooters</button> -->
         <!-- center to user location -->
-        <button class="getUserLocation" @click="centerToUserLocation">Center map to my Location</button>
+        <button class="centerToUser" @click="centerToUserLocation">Center map to my Location</button>
         <h2>Avaliable Scooters</h2>
         <ul>
           <li v-for="scooter in nearbyScooters" :key="scooter.id" class="scooter-item">
@@ -86,6 +86,14 @@
             <li v-for="booking in myBookings" :key="booking.id">
             ID: {{ booking.scooter_id }} - Status: {{ booking.status }} - Start Time: {{ booking.startTime }} - End Time: {{ booking.endTime }} - Duration: {{ booking.durationInHours }} hours - Price: ${{ booking.price }}
               <button class="cancel-button" @click="cancelBooking(booking.id)">Cancel</button>
+              <!-- extend booking -->
+              <div class="input-field">
+                <label for="extendDuration">Extend Duration:</label>
+                <select id="extendDuration" v-model="selectedDuration">
+                  <option v-for="option in options" :key="option.value" :value="option.value">{{ option.text }}</option>
+                </select>
+              </div>
+              <button class="extend-button" @click="extendBooking(booking.id)">Extend</button>
             </li>
           </ul>
         </div>
@@ -98,8 +106,7 @@
   import { useStore } from 'vuex';
   import LayoutHeader from '@/views/Layout/components/LayoutHeader.vue';
   import { getNearestScootersAPI } from "@/apis/scooter";
-  import { Booking, getUserBookingsAPI, cancelBookingAPI } from "@/apis/booking";
-  // import { getAllScootersAPI } from "@/apis/scooter"; // Import the API function to fetch all scooters
+  import { Booking, getUserBookingsAPI, cancelBookingAPI, extendBookingAPI } from "@/apis/booking";
   
   // const map = ref();
   let map;
@@ -391,7 +398,27 @@ const centerToUserLocation = () => {
     }
 };
 
-
+const extendBooking = async (bookingId) => {
+  console.log('Extending booking with ID:', bookingId);
+  try {
+    const response = await extendBookingAPI(bookingId, selectedDuration.value); // Call the API to extend the booking
+    console.log('Extend booking response:', response);
+    if (response) {
+      myBookings.value = myBookings.value.map(booking => {
+        if (booking.id === bookingId) {
+          return { ...booking, duration: selectedDuration.value }; // Update the duration in the booking list
+        }
+        return booking;
+      });
+      alert('Booking extended successfully!');
+    } else {
+      alert('Failed to extend booking, please try again later.');
+    }
+  } catch (error) {
+    console.error('Extend booking failed:', error.response?.data || error.message);
+    alert('Extend booking failed, please try again later.');
+  }
+};
   </script>
   
   <style scoped>
@@ -517,7 +544,7 @@ const centerToUserLocation = () => {
     cursor: pointer;
   }
 
-  .getUserLocation{
+  .centerToUser{
     background-color: #007bff;
     color: white;
     padding: 10px 20px;
@@ -577,4 +604,26 @@ const centerToUserLocation = () => {
 .cancel-button:hover {
   background-color: #c82333;
 }
-  </style>
+
+.getUserLocation {
+  background-color: #077f0d;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 10px 20px;
+}
+
+.extend-button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+</style>

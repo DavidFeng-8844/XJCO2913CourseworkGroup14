@@ -67,9 +67,22 @@ public class ScooterController {
 
     // 获取用户的所有预订
     @GetMapping("/get-bookings")
-    public List<Booking> getUserBookings(@RequestParam Long userId) {
+    public List<Booking> getUserBookings(@RequestParam Long userId) {   
         System.out.println("Received request to get bookings for user: " + userId);
         return bookingService.getUserBookings(userId);
+    }
+
+    // Extend booking duration
+    // Extend booking duration
+    @GetMapping("/extend-booking")
+    public ResponseEntity<String> extendBooking(@RequestParam Long bookingId, @RequestParam int additionalHours) {
+        System.out.println("Received request to extend booking: " + bookingId + " by " + additionalHours + " hours.");
+        try {
+            bookingService.extendBooking(bookingId, additionalHours);
+            return ResponseEntity.ok("Booking extended successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to extend booking: " + e.getMessage());
+        }
     }
 }
 
