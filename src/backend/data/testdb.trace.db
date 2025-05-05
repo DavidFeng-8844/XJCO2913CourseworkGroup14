@@ -8323,3 +8323,6 @@ select s1_0.id,s1_0.location_lat,s1_0.location_lng,s1_0.status from scooters s1_
 2025-05-03 17:01:14.194069+08:00 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM ""BOOKINGS"""; expected "identifier"; SQL statement:
 DELETE * FROM "BOOKINGS" [42001-232]
+2025-05-05 18:20:29.260896+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "users" not found; SQL statement:
+SELECT * FROM "users" [42102-232]

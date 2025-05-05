@@ -172,6 +172,10 @@ public class BookingService {
                 else if (duration == 4) return 30;
                 else if (duration == 24) return 50;
                 else if (duration == 168) return 200;
+                // calculate other durations
+                else if (duration > 1 && duration < 4) return 10 * (duration / 1.0);
+                else if (duration > 4 && duration < 24) return 50;
+                else if (duration > 24 && duration < 168) return 50 * (duration / 24.0);
                 else return 0;
             })
         ));
@@ -192,6 +196,11 @@ public class BookingService {
                     if (duration == 1) return 10;
                     else if (duration == 4) return 30;
                     else if (duration == 24) return 50;
+                    // else return 0;
+                    // calculate other durations
+                    else if (duration > 1 && duration < 4) return 10 * (duration / 1.0);
+                    else if (duration > 4 && duration < 24) return 50;
+                    else if (duration > 24 && duration < 168) return 50 * (duration / 24.0);
                     else return 0;
                 })
             ));

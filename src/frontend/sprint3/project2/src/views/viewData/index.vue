@@ -1,114 +1,101 @@
 <template>
   <div class="data-container">
     <LayoutHeader :is-transparent="false" />
-    
-    <h1 class="title">数据分析页面</h1>
+
+    <h1 class="title">Data Dashboard</h1>
 
     <div class="section income-section">
-      <h2>每周租赁选项收入</h2>
-      <div v-if="weeklyIncome.length">
-        <h3>每种租赁选项的每周收入</h3>
-        <ul>
-          <li v-for="(income, option) in weeklyIncome" :key="option">
-            {{ option }}: ${{ income }}
-          </li>
-        </ul>
-      </div>
-      <button @click="plotWeeklyIncomeGraph">绘制每周收入图表</button>
-      <div v-if="graphData.length">
-        <!-- 图表区域 -->
-        <canvas id="incomeChart" ref="incomeChart"></canvas>
-      </div>
+      <h2>Weekly Income by Rental Option</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rental Option</th>
+            <th>Weekly Income</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(income, option) in weeklyIncome" :key="option">
+            <td>{{ option }}</td>
+            <td>${{ income.toFixed(2) }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <div class="section daily-income-section">
-      <h2>过去一周每日收入</h2>
-      <div>
-        <ul>
-          <li v-for="(income, index) in dailyIncome" :key="index">
-            第{{ index + 1 }}天: ${{ income }}
-          </li>
-        </ul>
-        <h3>累计收入: ${{ totalDailyIncome }}</h3>
-      </div>
+      <h2>Daily Income Over the Past Week</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Daily Income</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(income, date) in dailyIncome" :key="date">
+            <td>{{ date }}</td>
+            <td>${{ income.toFixed(2) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section graph-section">
+      <h2>Weekly Income Graph</h2>
+      <canvas id="weeklyIncomeGraph"></canvas>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
 import LayoutHeader from '@/views/Layout/components/LayoutHeader.vue';
-import { Chart, registerables } from 'chart.js';
-import { getWeeklyIncomeAPI, getDailyIncomeAPI } from "@/apis/booking"; // 导入相应的 API
+import { getWeeklyIncomeAPI, getDailyIncomeAPI } from '@/apis/booking'; // 假设你有相应的 API
+import Chart from 'chart.js/auto';
 
-// 注册 Chart.js 的所有组件
-Chart.register(...registerables);
-
-const store = useStore();
 const weeklyIncome = ref({});
-const dailyIncome = ref([]);
-const totalDailyIncome = ref(0);
-const graphData = ref([]);
+const dailyIncome = ref({});
 
-// 获取每种租赁选项的每周收入
-const fetchWeeklyIncome = async () => {
+const fetchIncomeData = async () => {
   try {
-    const response = await getWeeklyIncomeAPI();
-    console.log('每周收入数据:', response.data); // 打印获取到的每周收入数据
-    weeklyIncome.value = response.data; // 假设返回的数据形如 { "1小时": 100, "4小时": 300, ... }
+    weeklyIncome.value = (await getWeeklyIncomeAPI()); // 从 API 获取每周收入
+    console.log('Weekly Income:', weeklyIncome.value);
+    dailyIncome.value = (await getDailyIncomeAPI()); // 从 API 获取每日收入
+    plotWeeklyIncomeGraph(); // 绘制图表
   } catch (error) {
-    console.error('获取每周收入失败:', error);
+    console.error('获取收入数据失败:', error);
   }
 };
 
-// 获取过去一周的每日收入
-const fetchDailyIncome = async () => {
-  try {
-    const response = await getDailyIncomeAPI();
-    dailyIncome.value = response.data; // 假设返回的数据是一个数组 [100, 200, 150, ...]
-    totalDailyIncome.value = dailyIncome.value.reduce((a, b) => a + b, 0); // 计算累计收入
-  } catch (error) {
-    console.error('获取每日收入失败:', error);
-  }
-};
-
-// 绘制每周收入图表
 const plotWeeklyIncomeGraph = () => {
-  const ctx = document.getElementById('incomeChart').getContext('2d');
-  
-  if (window.incomeChart) {
-    window.incomeChart.destroy(); // 销毁旧图表实例
-  }
-  
-  window.incomeChart = new Chart(ctx, {
+  const ctx = document.getElementById('weeklyIncomeGraph').getContext('2d');
+  const labels = Object.keys(weeklyIncome.value);
+  const data = Object.values(weeklyIncome.value);
+
+  new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: Object.keys(weeklyIncome.value), // 租赁选项的标签
-      datasets: [
-        {
-          label: '每周收入',
-          data: Object.values(weeklyIncome.value), // 租赁选项对应的收入
-          backgroundColor: 'rgba(75, 192, 192, 0.5)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1,
-        },
-      ],
+      labels: labels,
+      datasets: [{
+        label: 'Weekly Income ($)',
+        data: data,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
     },
     options: {
       scales: {
         y: {
-          beginAtZero: true,
-        },
-      },
-    },
+          beginAtZero: true
+        }
+      }
+    }
   });
 };
 
-// 在页面挂载时初始化数据
-onMounted(async () => {
-  await fetchWeeklyIncome();
-  await fetchDailyIncome();
+onMounted(() => {
+  fetchIncomeData();
 });
 </script>
 
@@ -116,7 +103,24 @@ onMounted(async () => {
 .data-container {
   padding: 20px;
 }
-.income-section, .daily-income-section {
+
+.title {
+  text-align: center;
   margin-bottom: 20px;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
 }
 </style>

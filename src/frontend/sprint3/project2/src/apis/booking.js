@@ -62,7 +62,12 @@ export function extendBookingAPI(bookingId, additionalHours) {
  * @return {Promise} 返回每种租赁选项的收入数据
  */
 export function getWeeklyIncomeAPI() {
-    return scooter.get('/weekly-income');
+    // 打印返回的数据
+    return scooter.get('/weekly-income').then((response) => {
+        console.log('Weekly income data:', response); // 打印每周收入数据
+        return response; // 返回数据
+    });
+    // return scooter.get('/weekly-income');
 }
 
 /**
@@ -70,5 +75,9 @@ export function getWeeklyIncomeAPI() {
  * @return {Promise} 返回每日收入数据
  */
 export function getDailyIncomeAPI() {
-    return scooter.get('/daily-income');
+    // return scooter.get('/daily-income');
+    return scooter.get('/daily-income').then((response) => {
+        console.log('Daily income data:', response); // 打印每日收入数据
+        return response; // 返回数据
+    });
 }
