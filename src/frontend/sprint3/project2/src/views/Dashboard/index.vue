@@ -56,11 +56,18 @@
               <option v-for="option in options" :key="option.value" :value="option.value">{{ option.text }}</option>
             </select>
           </div>
-
           <div class="input-field">
-            <label for="cardNumber">Card Number:</label>
-            <input type="text" id="cardNumber" v-model="cardNumber" placeholder="Enter your card number" />
-          </div>
+            <label for="discountTypes">Discount Type:</label>
+            <select
+              id="discountTypes"
+              v-model="selectedDiscountType"
+              @change="updateDiscountType"
+            >
+              <option v-for="(value, key) in discountTypes" :key="key" :value="key">
+                {{ key }}
+              </option>
+            </select>
+            </div>    
         </div>
   
         <button class="book-button" @click="bookScooter">Book Scooter</button>
@@ -80,7 +87,7 @@
           </div>
         </div>
         <div class="section my-bookings-section">
-          <button class="book-button" @click="getMyBookings">Get My Bookings</button>
+          <button class="book-button" @click="getMyBookings(discountTypes)">Get My Bookings</button>
           <h2>My booking</h2>
           <ul>
             <li v-for="booking in myBookings" :key="booking.id">
@@ -115,9 +122,6 @@
   const scooterMarkers = ref([]);
   const store = useStore();
   const myBookings = ref([]); // Store user's bookings
-  const allScooters = ref([]); // Store all scooters
-  const allScooterMarkers = ref([]); // Store all scooter markers
-  const registeredUsers = ref([]); // Store registered users
   const isNewUser = ref(''); // Default to empty or 'new'
   const newUser = ref({
     name: '',
@@ -296,8 +300,11 @@ const centerToUserLocation = () => {
   const scooterId = ref('');
   const selectedDuration = ref('1小时');
   const bookings = ref([]);
-  // const options = ['1 hour', '4 hour', '1 day', '1 week'];
-  // key value pair for options
+  const selectedDiscountType = ref(store.getters.selectedDiscountType);
+
+const updateDiscountType = () => {
+  store.commit('setSelectedDiscountType', selectedDiscountType.value);
+};
   const options = [
     { text: '1 hour', value: 1 },
     { text: '4 hour', value: 4 },
@@ -309,6 +316,13 @@ const centerToUserLocation = () => {
     '4 hour': 30,
     '1 day': 50,
     '1 week': 200,
+  };
+
+  const discountTypes = {
+    'new': 0,
+    'frequent': 0.1,
+    'student': 0.2,
+    'senior': 0.3,
   };
   
   const bookScooter = async () => {
@@ -350,6 +364,7 @@ const centerToUserLocation = () => {
   const getMyBookings = async () => {
     const userId = store.getters.user?.id; // 从 Vuex 获取用户 ID
     console.log('User ID:', userId);
+    console.log('Selected Discount Type:', store.getters.selectedDiscountType);
 
     try {
         const response = await getUserBookingsAPI(userId); // 调用 API 获取预订信息
@@ -376,6 +391,11 @@ const centerToUserLocation = () => {
                 else {
                     price = 200 + (durationInHours - 168) * 10; // 每小时10美元
                 }
+                // 根据折扣类型计算折扣
+                console.log('Discount Type:', selectedDiscountType.value);
+                const currentDiscountType = store.getters.selectedDiscountType;
+                const discount = discountTypes[currentDiscountType] || 0; // 获取折扣值
+                price = price - (price * discount); // 计算折扣后的价格
 
 
                 console.log(`Booking ID: ${booking.id}`);

@@ -74,7 +74,6 @@ public class ScooterController {
     }
 
     // Extend booking duration
-    // Extend booking duration
     @GetMapping("/extend-booking")
     public ResponseEntity<String> extendBooking(@RequestParam Long bookingId, @RequestParam int additionalHours) {
         System.out.println("Received request to extend booking: " + bookingId + " by " + additionalHours + " hours.");
